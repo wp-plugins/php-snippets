@@ -4,13 +4,13 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: php, exec, snippet, code
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 4.3
+Stable tag: trunk
 
 BETA ONLY. Provides an interface for developers to easily add PHP code to their posts via selectable shortcodes.
 
 == Description ==
 
-DO NOT DOWNLOAD THIS YET.  This plugin allows developers to easily add PHP code to their posts and pages.  All *.php* files contained in a special directory will be executable via a corresponding [shortcode].  For example, a file named *my-code.php* can be executed by adding a [my-code] shortcode to your post content.  The source directory is configurable: you can put it anywhere on your server that you wish, e.g. you can enhance the security of your code by storing it _above_ the root directory.  
+This plugin allows developers to easily add PHP code to their posts and pages.  All *.snippet.php* files contained in a special directory will be executable via a corresponding [shortcode].  For example, a file named *my-code.snippet.php* can be executed by adding a [my-code] shortcode to your post content.  The source directory is configurable: you can put it anywhere on your server that you wish, e.g. you can enhance the security of your code by storing it _above_ the root directory.  
 
 By keeping all the PHP code in PHP files, you ensure that your WordPress posts and pages remain clean.  All available shortcodes are listed when the user clicks a custom TinyMCE button.
 
@@ -42,3 +42,8 @@ Coming...
 
 = 0.5 =
 * Initial release
+
+
+== Upgrade Notice ==
+
+No upgrades available yet...
