@@ -25,7 +25,13 @@ class PHP_Snippet {
 			// TODO: does basename.defaults.php exist?  If yes, include it and use shortcode_atts()
 			// TODO: make all arguments avail. to a single var, e.g $scriptProperties
 			// TODO: pass [tag]surrounded[/tag] content to the snippet.
-			extract($args[0]);
+			if (isset($args[0])) {
+				extract($args[0]);
+			}
+			// surrounded by [tag]content[/tag]
+			if (isset($args[1])) {
+				$content = $args[1];
+			}
 			ob_start();
 			include $this->snippets[$name];
 			$content = ob_get_clean();
