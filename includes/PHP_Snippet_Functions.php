@@ -1,6 +1,17 @@
 <?php
 /**
  * Library of static functions used by this plugin.
+ 
+ Data Structure:
+ 
+ Array(
+ 	[shortname] => Array(
+ 		[file] => /full/path/to/shortname.snippet.php
+ 		[description] => An optional description for the Snippet
+ 		[controller] => /full/path/to/optional/shortname.controller.php
+ 	),
+ )
+ 
  *
  */
 class PHP_Snippet_Functions {
@@ -21,6 +32,11 @@ class PHP_Snippet_Functions {
 	public static $data;
 	
 	/**
+	 * The key in wp_postmeta
+	 */
+	const db_key = 'php_snippets';
+	
+	/**
 	 * Used to store warnings that are displayed to admin users.
 	 */ 
 	public static $warnings;
@@ -35,6 +51,25 @@ class PHP_Snippet_Functions {
 	 * All snippets
 	 */
 	public static $snippets = array();
+
+
+	public static function add_menu() {
+		add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 'php-snippets', 'PHP_Snippet_Functions::settings');
+	}
+
+	/**
+	 * Create custom post-type menu
+	 */
+	public static function create_admin_menu()
+	 {
+	 	add_options_page( 
+	 		'PHP Snippets', 					// page title
+	 		'PHP Snippets', 					// menu title
+			'manage_options', 					// capability
+	 		'php_snippets', 					// menu slug
+	 		'PHP_Snippet_Functions::get_admin_page' // callback	 	
+	 	);
+	}
 	
 	//------------------------------------------------------------------------------
 	/**
@@ -83,17 +118,38 @@ class PHP_Snippet_Functions {
 	 */
 	public static function get_snippets($force_scan=false) {
 		//if ($force_scan) {
-		//	self::$snippets = get_option('php_snippets_data');
+		self::$data = get_option(self::db_key, array());
+
 		//}
 		// Scan built-in directory
-		$dir = PHP_SNIPPETS_PATH .'/snippets';
-		$rawfiles = scandir($dir);
-		foreach ($rawfiles as $f) {
-			// if (is_dir()) { }
-			if ( !preg_match('/^\./', $f) && preg_match('/\.snippet\.php$/', $f) ) {
-				$shortname = basename($f);
-				$shortname = preg_replace('/\.snippet\.php$/', '', $shortname);
-				self::$snippets[$shortname] = $dir.'/'.$f;
+		$dirs[] = PHP_SNIPPETS_PATH .'/snippets';
+		
+		$user_dir = self::get_value(self::$data, 'snippet_dir', '');
+		if (!empty($user_dir)){
+			$dirs[] = $user_dir;
+		}
+		
+		foreach($dirs as $dir){			
+			$rawfiles = scandir($dir);
+			foreach ($rawfiles as $f) {
+				// Check immediate sub-dirs
+				if (is_dir($dir.'/'.$f)) { 
+					$raw_subfiles = scandir($dir.'/'.$f);
+					foreach ($raw_subfiles as $sf) {
+						if ( !preg_match('/^\./', $sf) && preg_match('/\.snippet\.php$/', $sf) ) {
+							$shortname = basename($sf);
+							$shortname = preg_replace('/\.snippet\.php$/', '', $shortname);
+							self::$snippets[$shortname] = $dir.'/'.$sf; // store the path to snippet
+						}				
+					}
+				}
+				else {
+					if ( !preg_match('/^\./', $f) && preg_match('/\.snippet\.php$/', $f) ) {
+						$shortname = basename($f);
+						$shortname = preg_replace('/\.snippet\.php$/', '', $shortname);
+						self::$snippets[$shortname] = $dir.'/'.$f; // store the path to snippet
+					}			
+				}
 			}
 		}
 		// TODO: scan 3rd party directories
@@ -104,12 +160,41 @@ class PHP_Snippet_Functions {
 
 	//------------------------------------------------------------------------------
 	/**
+	 * Designed to safely retrieve scalar elements out of a hash. Don't use this
+	 * if you have a more deeply nested object (e.g. an array of arrays).
+	 *
+	 * @param array   $hash    an associative array, e.g. array('animal' => 'Cat');
+	 * @param string  $key     the key to search for in that array, e.g. 'animal'
+	 * @param mixed   $default (optional) : value to return if the value is not set. Default=''
+	 * @return mixed
+	 */
+
+	public static function get_value($hash, $key, $default='') {
+		if ( !isset($hash[$key]) ) {
+			return $default;
+		}
+		else {
+			if ( is_array($hash[$key]) ) {
+				return $hash[$key];
+			}
+			else {
+				return $hash[$key];
+			}
+		}
+	}
+
+	//------------------------------------------------------------------------------
+	/**
 	 * Used to initialize the plugin
 	 */
 	public static function init() {
 		
-		//wp_enqueue_script('media-upload'); // We need the send_to_editor() function.
-		wp_enqueue_script('php_snippets_manager', PHP_SNIPPETS_URL . '/js/manager.js' );
+		if (is_admin()) {		
+			//wp_enqueue_script('media-upload'); // We need the send_to_editor() function.
+			wp_enqueue_script('php_snippets_manager', PHP_SNIPPETS_URL . '/js/manager.js' );
+			wp_register_style('php_snippets_css', PHP_SNIPPETS_URL . '/css/style.css');
+			wp_enqueue_style('php_snippets_css');
+		}
 		
 		// The following makes PHP variables available to Javascript the "correct" way.
 		// See http://code.google.com/p/wordpress-custom-content-type-manager/issues/detail?id=226
@@ -126,6 +211,9 @@ class PHP_Snippet_Functions {
 		global $shortcode_tags;
 		self::$existing_shortcodes = array_keys($shortcode_tags);
 		//print '<pre>'; print_r($shortcode_tags); print '</pre>'; exit;
+		
+		// Add a menu item
+		add_action('admin_menu', 'PHP_Snippet_Functions::add_menu');
 		
 		self::$Snippet = new PHP_Snippet();
 		self::$Ajax = new PHP_Ajax();
@@ -159,6 +247,13 @@ class PHP_Snippet_Functions {
 		self::$warnings[] = $msg;
 	}
 	
+	//------------------------------------------------------------------------------
+	/**
+	 * Generate the settings page
+	 */
+	public static function settings() {
+		include(PHP_SNIPPETS_PATH.'/controllers/settings.php');
+	}
 	
 	//------------------------------------------------------------------------------
 	/**

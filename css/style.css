@@ -1,0 +1,47 @@
+#php_snippets_header {
+	color: #cecece;
+	font-size: 23px;
+	line-height: 29px;
+	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', sans-serif;
+	padding-bottom: 50px;
+}
+
+
+.php_snippets_header_text {
+	color: #cecece;
+	font-size: 23px;
+	line-height: 29px;
+	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', sans-serif;
+}
+
+img.php_snippets_img {
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+
+span.php_snippets_link {
+	padding: 10px;
+	margin-left: 5px;
+}
+
+
+.php_snippets_page_title {
+	display: block;
+	margin-top: -10px;
+	color: #464646;
+	font-size: 18px;
+	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', sans-serif;
+}
+
+.php_snippets_description {
+	display:block;
+	font-style:italic;
+}
+
+
+label.php_snippets_label {
+	display:block;
+	font-weight:bold;
+}
+

@@ -3,7 +3,7 @@ Contributors: fireproofsocks
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WPR4A9JT355BE
 Tags: php, exec, snippet, code
 Requires at least: 3.0
-Tested up to: 3.2.1
+Tested up to: 3.3
 Stable tag: trunk
 
 BETA ONLY. Provides an interface for developers to easily add PHP code to their posts via selectable shortcodes.
@@ -30,7 +30,7 @@ You can install this plugin in the standard way from the WordPress plugin admin 
 
 = There's a Bug in the Plugin! =
 
-Check to make sure the bug is actually in the plugin and not in one of your Snippets.  This plugin acts mostly as a pass-through.
+Check to make sure the bug is actually in the plugin and not in one of your Snippets.  This plugin acts mostly as a pass-through, and the error messages should be confined to your code, not mine.  But if there's something goofy going on, please let me know.
 
 
 == Screenshots ==
