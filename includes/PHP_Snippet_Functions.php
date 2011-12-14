@@ -2,7 +2,7 @@
 /**
  * Library of static functions used by this plugin.
  
- Data Structure:
+ Data Structure for $snippets
  
  Array(
  	[shortname] => Array(
