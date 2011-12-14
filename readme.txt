@@ -4,17 +4,22 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: php, exec, snippet, code
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: trunk
+Stable tag: 0.6
 
-BETA ONLY. Provides an interface for developers to easily add PHP code to their posts via selectable shortcodes.
+Provides an interface for developers to easily add PHP code to their posts via selectable shortcodes.
 
 == Description ==
 
-This plugin allows developers to easily add PHP code to their posts and pages.  All *.snippet.php* files contained in a special directory will be executable via a corresponding [shortcode].  For example, a file named *my-code.snippet.php* can be executed by adding a [my-code] shortcode to your post content.  The source directory is configurable: you can put it anywhere on your server that you wish, e.g. you can enhance the security of your code by storing it _above_ the root directory.  
+http://youtu.be/03yDdrhOSN4
+
+This plugin allows developers to easily add PHP code to their posts and pages.  All *.snippet.php* files contained in the configured directory will be executable via a corresponding [shortcode].  For example, a file named *my-code.snippet.php* can be executed by adding a [my-code] shortcode to your post content.  The source directory is configurable: you can put it anywhere on your server that you wish, e.g. you can enhance the security of your code by storing it _above_ the root directory.  
 
 By keeping all the PHP code in PHP files, you ensure that your WordPress posts and pages remain clean.  All available shortcodes are listed when the user clicks a custom TinyMCE button.
 
 See the [Project Home Page](http://code.google.com/p/wordpress-php-snippets/) for more information.  This plugin requires PHP 5.2.6 or greater.
+
+This plugin can save you from writing lots of other plugins because you can easily tie into PHP files without having to register your own plugins.
+
 
 == Installation ==
 
@@ -25,20 +30,53 @@ You can install this plugin in the standard way from the WordPress plugin admin 
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Create a new post or page
 1. Notice the new `<?php` button in the TinyMCE toolbar -- click it to get a list of available PHP Snippets, then select the one you want to insert it into your post.
+1. Optionally, configure your custom snippet directory under the Settings --> PHP Snippets directory and put in the /full/path/to/your/directory
 
 == Frequently Asked Questions ==
 
+= My Snippets are not showing up!=
+
+Make sure your files use the `.snippet.php` extension and that you have correctly configured your PHP Snippets directory under *Settings --> PHP Snippets*.  The directory has to be a *full* path, e.g. `/home/myuser/public_html/snippets`  
+
+Only `*.snippet.php` files inside your PHP Snippet directory _OR_ inside of an immediate subfolder will be selectable.  Deeper hierarchies are not supported.
+
+= What information needs to be in the Snippet header? =
+
+Your Snippets should include an information header in the same way that WordPress plugins and themes, but it's much simplified.  Include a *Description:* and a *Shortcode:* to indicate a description and a sample shortcode, respectively.
+
+`
+/*
+Description: Generates a link to a post or page based on its ID.
+Shortcode: [link id=123]Click here[/link]
+*/`
+
+Look at the examples in the `php-snippets/snippets` directory for some examples.
+
+= What inputs does my Snippet get? =
+
+Anything you pass in your shortcode will be passed to your Snippet. E.g. `[mySnippet x="123" y="Llama"]` will make the variables `$x` and `$y` available in your Snippet. The `$content` variable is reserved for when you use a _full_ tag, e.g. `[mySnippet]My content goes here[/mySnippet]
+
+= What should my Snippet output? =
+
+Your code doesn't _have_ to output anything -- maybe you just want to execute some stuff on the back-end.  But if you want to return something, you should _print_ it.  That means you can easily include HTML.
+
+
 = There's a Bug in the Plugin! =
 
-Check to make sure the bug is actually in the plugin and not in one of your Snippets.  This plugin acts mostly as a pass-through, and the error messages should be confined to your code, not mine.  But if there's something goofy going on, please let me know.
+Check to make sure the bug is actually in the plugin and not in one of your Snippets.  This plugin acts mostly as a pass-through, and the error messages should be confined to your code (hopefully not mine).  If there's something goofy going on, please let me know by filing a [bug report](http://code.google.com/p/wordpress-php-snippets/issues/list).
 
 
 == Screenshots ==
 
-Coming...
+1. Use the TinyMCE button to launch the "Snippet Selector" in a thickbox.
+2. Select any of the listed PHP Snippets to have its sample shortcode inserted into your post 
 
 
 == Changelog ==
+
+= 0.6 =
+
+Worked out some bugs, cleaned this thing up for the prom.
 
 = 0.5 =
 * Initial release
@@ -46,4 +84,4 @@ Coming...
 
 == Upgrade Notice ==
 
-No upgrades available yet...
+Go ahead and upgrade... if you had the beta, you were fearless anyhow.

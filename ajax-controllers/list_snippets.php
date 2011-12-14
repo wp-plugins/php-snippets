@@ -14,8 +14,18 @@ $data['other_shortcodes'] = '';
 $snippets = PHP_Snippet_Functions::get_snippets(); 
 
 
-foreach($snippets as $shortname => $path) {
-	$data['content'] .= '<strong class="linklike" onclick="javascript:insert_shortcode(\'['.$shortname.']\');">'.$shortname.'</strong><br/>';
+foreach($snippets as $shortname => $d) {
+	if (empty($d['shortcode'])) {
+		$d['shortcode'] = "[$shortname]";
+	}
+	$data['content'] .= sprintf('<li>
+		<strong class="linklike" onclick="javascript:insert_shortcode(\'%s\');">%s</strong> 
+		: <span class="php_snippets_desc">%s</span></li>'
+		, htmlspecialchars($d['shortcode'])
+		, $shortname
+		, $d['desc']
+	);
+
 }
 
 /*

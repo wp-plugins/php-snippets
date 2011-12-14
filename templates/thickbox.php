@@ -18,7 +18,9 @@
 
 <p>Below are listed PHP Snippets that you have installed on your site.  Select one to add its shortcode to your post or page.  If you would like to add your own PHP Snippets to this list, simply create a PHP file in the <strong>wp-content/plugins/php-snippets/snippets</strong> directory and save it using a <code>.snippet.php</code> extension.</p>
 
+<ul>
 <?php print $data['content']; ?>
+</ul>
 
 <div id="php_snippets_footer">
 	<p style="margin:10px;">

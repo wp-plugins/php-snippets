@@ -85,25 +85,7 @@ class PHP_Snippet_Functions {
 		}
 	}
 
-	//------------------------------------------------------------------------------
-	/**
-	 * Reads from settings.
-	 */
-	public static function get_snippet_dir() {
-		$dir = plugin_dir_path(dirname(__FILE__)) . 'snippets';
-		if (isset($data['snippet_dir'])) {
-			if (!file_exists($data['snippet_dir'])) {
-				// throw error!
-				self::register_warning( __('The selected Snippet directory does not exist!', 'php-snippets'));
-				return $dir;
-			}
-			if (!is_dir($data['snippet_dir'])) {
-				
-			}
-		}
-		return $dir;
-	}
-	
+
 	//------------------------------------------------------------------------------
 	/**
 	 * This is what populates our "radar" -- finds all available Snippets.  Used 
@@ -139,7 +121,8 @@ class PHP_Snippet_Functions {
 						if ( !preg_match('/^\./', $sf) && preg_match('/\.snippet\.php$/', $sf) ) {
 							$shortname = basename($sf);
 							$shortname = preg_replace('/\.snippet\.php$/', '', $shortname);
-							self::$snippets[$shortname] = $dir.'/'.$sf; // store the path to snippet
+							$path = $dir.'/'.$sf; // store the path to snippet
+							self::$snippets[$shortname] = self::get_snippet_info($path);
 						}				
 					}
 				}
@@ -147,16 +130,69 @@ class PHP_Snippet_Functions {
 					if ( !preg_match('/^\./', $f) && preg_match('/\.snippet\.php$/', $f) ) {
 						$shortname = basename($f);
 						$shortname = preg_replace('/\.snippet\.php$/', '', $shortname);
-						self::$snippets[$shortname] = $dir.'/'.$f; // store the path to snippet
+						$path = $dir.'/'.$f; // store the path to snippet
+						self::$snippets[$shortname] = self::get_snippet_info($path);
 					}			
 				}
 			}
 		}
-		// TODO: scan 3rd party directories
-		// update_option('php_snippets_data');
 		
 		return self::$snippets;
 	}
+	
+	//------------------------------------------------------------------------------
+	/**
+	 * Given the /full/path/to/snippet.php, read a description out of the header,
+	 * and read a sample shortcode.
+	 *
+	 * @param	string	$path to file
+	 * @param	array	
+	 */
+	public static function get_snippet_info($path) {
+	
+		$info['path'] 		= $path;
+		$info['desc'] 		= '';
+		$info['shortcode'] 	= '';
+		
+		if (file_exists($path)) {
+			$contents = file_get_contents($path);
+			
+			// Get description
+			preg_match('/^Description:(.*)$/m', $contents, $matches);
+			
+			if (isset($matches[1])) {
+				$info['desc'] = $matches[1];
+			}
+
+			// Get shortcode
+			preg_match('/^Shortcode:(.*)$/m', $contents, $matches);
+			
+			if (isset($matches[1])) {
+				$info['shortcode'] = $matches[1];
+			}
+		}
+		
+		return $info;
+	}
+	//------------------------------------------------------------------------------
+	/**
+	 * Reads from settings.
+	 */
+	public static function get_snippet_dir() {
+		$dir = plugin_dir_path(dirname(__FILE__)) . 'snippets';
+		if (isset($data['snippet_dir'])) {
+			if (!file_exists($data['snippet_dir'])) {
+				// throw error!
+				self::register_warning( __('The selected Snippet directory does not exist!', 'php_snippets'));
+				return $dir;
+			}
+			if (!is_dir($data['snippet_dir'])) {
+				
+			}
+		}
+		return $dir;
+	}
+
 
 	//------------------------------------------------------------------------------
 	/**

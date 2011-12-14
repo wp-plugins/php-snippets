@@ -2,10 +2,10 @@
 if (!defined('WP_PLUGIN_DIR')) exit('No direct script access allowed');
 /*
 Plugin Name: PHP Snippets
-Plugin URI: http://craftsmancoding.com/
+Plugin URI: http://code.google.com/p/wordpress-php-snippets/
 Description: Publishes shortcodes for each PHP file contained in a specified directory.
 Author: Everett Griffiths
-Version: 0.5
+Version: 0.6
 Author URI: http://craftsmancoding.com/
 */
 
@@ -16,9 +16,9 @@ $required_php_version = '5.2.6';
 $php_snippet_errors = array();
 
 if ( version_compare( phpversion(), $required_php_version, '<') ) {
-	$msg = sprintf( __('The PHP Snippets plugin requires PHP %2$s or newer.', 'php-snippets' )
+	$msg = sprintf( __('The PHP Snippets plugin requires PHP %2$s or newer.', 'php_snippets' )
 		,  $required_php_version);
-	$msg .= __('Talk to your system administrator about upgrading.', 'php-snippets');	
+	$msg .= __('Talk to your system administrator about upgrading.', 'php_snippets');	
 	$php_snippet_errors[] = $msg;
 }
 
@@ -34,7 +34,7 @@ function php_snippets_print_notices() {
 		foreach ( $php_snippet_errors as $e ) {
 			$error_items .= "<li>$e</li>";
 		}
-		$msg = __('The PHP Snippets plugin encountered errors! It cannot load!', 'php-snippets');
+		$msg = __('The PHP Snippets plugin encountered errors! It cannot load!', 'php_snippets');
 		printf('<div id="php-snippets-errors" class="error">
 			<p>
 				<strong>%1$s</strong>

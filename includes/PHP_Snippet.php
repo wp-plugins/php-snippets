@@ -18,14 +18,14 @@ class PHP_Snippet {
 	 * @param mixed $args
 	 */
 	public function __call($name, $args) {
-
+		
 		// get the file by name
-		if (isset($this->snippets[$name]) && file_exists($this->snippets[$name])) {
-	//		die(print_r($args, true));
+		if (isset($this->snippets[$name]['path']) && file_exists($this->snippets[$name]['path'])) {
+
 			// TODO: does basename.defaults.php exist?  If yes, include it and use shortcode_atts()
 			// TODO: make all arguments avail. to a single var, e.g $scriptProperties
 			// TODO: pass [tag]surrounded[/tag] content to the snippet.
-			if (isset($args[0])) {
+			if (isset($args[0]) && is_array($args[0])) {
 				extract($args[0]);
 			}
 			// surrounded by [tag]content[/tag]
@@ -33,7 +33,7 @@ class PHP_Snippet {
 				$content = $args[1];
 			}
 			ob_start();
-			include $this->snippets[$name];
+			include $this->snippets[$name]['path'];
 			$content = ob_get_clean();
 			return $content;
 		}
@@ -43,12 +43,12 @@ class PHP_Snippet {
 	}
 
 	/**
-	 * 
+	 * Register all shortcodes.
 	 */
 	public function __construct() {
 		// Register the shortcodes
 		$this->snippets = (array) PHP_Snippet_Functions::get_snippets(); //array(); // get snippets
-		foreach ($this->snippets as $name => $tmp) {
+		foreach ($this->snippets as $name => $data) {
 			if (!in_array($name, PHP_Snippet_Functions::$existing_shortcodes)) {
 				add_shortcode( $name , array($this, $name));
 			}
