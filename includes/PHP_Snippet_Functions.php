@@ -39,7 +39,7 @@ class PHP_Snippet_Functions {
 	/**
 	 * Used to store warnings that are displayed to admin users.
 	 */ 
-	public static $warnings;
+	public static $warnings = array();
 	
 	/**
 	 * We store these to ensure that there are no conflicts when a user creates their own.
@@ -57,6 +57,30 @@ class PHP_Snippet_Functions {
 		add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 'php-snippets', 'PHP_Snippet_Functions::settings');
 	}
 
+
+	/**
+	 * Test out a given directory to make sure it is legit.
+	 * @param	string	full path to directory to check.
+	 * @return	boolean	true on success, false on failure
+	 */
+	public static function check_permissions($dir) {
+		if (!file_exists($dir)) {
+			// throw error!
+			self::register_warning(sprintf(__('Directory does not exist! %s', 'php_snippets'), "<code>$dir</code>"));
+			return false;
+		}
+		if (!is_dir($dir)) {
+			self::register_warning(sprintf(__('The selected Snippet directory must be a directory, not a file! %s', 'php_snippets'), "<code>$dir</code>"));
+			return false;		
+		}
+		if (!is_executable($dir)) {
+			self::register_warning(sprintf(__('Directory is not executable! %s  Please adjust your file permisions', 'php_snippets'), "<code>$dir</code>"));
+			return false;
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * Create custom post-type menu
 	 */
@@ -96,7 +120,9 @@ class PHP_Snippet_Functions {
 	 *
 	 * Populates 
 	 *
-	 * @param	boolean	$force_scan if true, the directories will be re-scanned, otherwise, cached data is used.
+	 * @param	boolean	$force_scan if true, the directories will be re-scanned, otherwise, 
+	 *					cached data is used.
+	 * @return	array. On errors, an empty array is returned and warnings are registered.
 	 */
 	public static function get_snippets($force_scan=false) {
 		//if ($force_scan) {
@@ -111,8 +137,15 @@ class PHP_Snippet_Functions {
 			$dirs[] = $user_dir;
 		}
 		
-		foreach($dirs as $dir){			
-			$rawfiles = scandir($dir);
+		foreach($dirs as $dir){
+
+			if (!self::check_permissions($dir)) {
+				continue;			
+			}
+			
+			$rawfiles = @scandir($dir);
+			
+
 			foreach ($rawfiles as $f) {
 				// Check immediate sub-dirs
 				if (is_dir($dir.'/'.$f)) { 
@@ -174,25 +207,6 @@ class PHP_Snippet_Functions {
 		
 		return $info;
 	}
-	//------------------------------------------------------------------------------
-	/**
-	 * Reads from settings.
-	 */
-	public static function get_snippet_dir() {
-		$dir = plugin_dir_path(dirname(__FILE__)) . 'snippets';
-		if (isset($data['snippet_dir'])) {
-			if (!file_exists($data['snippet_dir'])) {
-				// throw error!
-				self::register_warning( __('The selected Snippet directory does not exist!', 'php_snippets'));
-				return $dir;
-			}
-			if (!is_dir($data['snippet_dir'])) {
-				
-			}
-		}
-		return $dir;
-	}
-
 
 	//------------------------------------------------------------------------------
 	/**
@@ -280,7 +294,7 @@ class PHP_Snippet_Functions {
 	 * @param	string	$msg	 the localized error message.
 	 */
 	public static function register_warning($msg) {
-		self::$warnings[] = $msg;
+		self::$warnings[$msg] = 1; // ensure warnings are duplicated
 	}
 	
 	//------------------------------------------------------------------------------

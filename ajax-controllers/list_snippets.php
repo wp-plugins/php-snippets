@@ -13,6 +13,13 @@ $data['other_shortcodes'] = '';
 
 $snippets = PHP_Snippet_Functions::get_snippets(); 
 
+if (!empty(PHP_Snippet_Functions::$warnings)) {
+	$data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
+	foreach (PHP_Snippet_Functions::$warnings as $w => $tmp) {
+		$data['content'] .= sprintf('<li>%s</li>', $w);
+	}
+	$data['content'] .= '<ul></p></div>';	
+}
 
 foreach($snippets as $shortname => $d) {
 	if (empty($d['shortcode'])) {
@@ -21,7 +28,7 @@ foreach($snippets as $shortname => $d) {
 	$data['content'] .= sprintf('<li>
 		<strong class="linklike" onclick="javascript:insert_shortcode(\'%s\');">%s</strong> 
 		: <span class="php_snippets_desc">%s</span></li>'
-		, htmlspecialchars($d['shortcode'])
+		, htmlspecialchars(addslashes($d['shortcode']))
 		, $shortname
 		, $d['desc']
 	);

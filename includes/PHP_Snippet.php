@@ -23,8 +23,7 @@ class PHP_Snippet {
 		if (isset($this->snippets[$name]['path']) && file_exists($this->snippets[$name]['path'])) {
 
 			// TODO: does basename.defaults.php exist?  If yes, include it and use shortcode_atts()
-			// TODO: make all arguments avail. to a single var, e.g $scriptProperties
-			// TODO: pass [tag]surrounded[/tag] content to the snippet.
+			// TODO: make all arguments avail. to a single var, e.g $scriptProperties, for snippets that have a variable # of inputs
 			if (isset($args[0]) && is_array($args[0])) {
 				extract($args[0]);
 			}
