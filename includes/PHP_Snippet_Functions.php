@@ -73,7 +73,7 @@ class PHP_Snippet_Functions {
 			self::register_warning(sprintf(__('The selected Snippet directory must be a directory, not a file! %s', 'php_snippets'), "<code>$dir</code>"));
 			return false;		
 		}
-		// !stristr(PHP_OS, 'WIN') &&
+		// *NIX requires that the directory is executable
 		if ( !preg_match('/^WIN/i', PHP_OS) && !is_executable($dir)) {
 			self::register_warning(sprintf(__('Directory is not executable! %s  Please adjust your file permisions', 'php_snippets'), "<code>$dir</code>"));
 			return false;
