@@ -25,11 +25,14 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
 	// A little cleanup before we handoff to save_definition_filter
 	$snippet_dir = trim(strip_tags(self::get_value($_POST, 'snippet_dir')));
 
-	if (!empty($snippet_dir) && !is_dir($snippet_dir)){
-		$data['msg'] = sprintf('<div class="error"><p>%s %s</p></div>', 'Could not read directory', "<code>$snippet_dir</code>");
-	}
-	elseif(!is_executable($snippet_dir)) {
-		$data['msg'] = sprintf('<div class="error"><p>%s %s</p></div>', 'The selected directory is not executable.  Please adjust your file permissions.', "<code>$snippet_dir</code>");
+	if (!PHP_Snippet_Functions::check_permissions($snippet_dir)){
+		if (!empty(PHP_Snippet_Functions::$warnings)) {
+			$data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
+			foreach (PHP_Snippet_Functions::$warnings as $w => $tmp) {
+				$data['content'] .= sprintf('<li>%s</li>', $w);
+			}
+			$data['content'] .= '<ul></p></div>';	
+		}
 	}
 	else {
 		$data['msg'] = sprintf('<div class="updated"><p>%s</p></div>', 'Your settings have been updated!');
@@ -39,7 +42,7 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
 	}
 }
 
-$data['content'] = self::load_view('settings.php', $data);
+$data['content'] .= self::load_view('settings.php', $data);
 
 print self::load_view('default.php', $data);
 /*EOF*/
