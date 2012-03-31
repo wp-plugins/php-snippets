@@ -1,8 +1,9 @@
 <?php
 /**
  * This "abstracting" class is the dynamic handler for all PHP Snippets
- *
- *
+ * The reason we have this class is so we can instantiate it and call 
+ * arbitrary methods on it (corresponding to Snippet names).  We use the 
+ * magic __call() function to handle the requests.
  *
  * @package php-snippets
  */
@@ -18,7 +19,7 @@ class PHP_Snippet {
 	 * @param mixed $args
 	 */
 	public function __call($name, $args) {
-		
+
 		// get the file by name
 		if (isset($this->snippets[$name]['path']) && file_exists($this->snippets[$name]['path'])) {
 

@@ -60,6 +60,7 @@ class PHP_Ajax {
 		if (isset($_REQUEST[$name.'_nonce'])) {
 			$nonce = $_REQUEST[$name.'_nonce'];
 		}
+
 		if ( ! wp_verify_nonce( $nonce, 'php_snippets_nonce' ) ) {
 			die(sprintf(__('Invalid nonce for %s', 'php_snippets'), "<em>$name</em>"));
 		}
@@ -88,7 +89,7 @@ class PHP_Ajax {
 			}
 		}
 		// TODO: scan 3rd party directory
-
+		
 		foreach ($this->controllers as $shortname => $path) {
 			add_action( 'wp_ajax_'.$shortname, array($this, $shortname) );
 		}

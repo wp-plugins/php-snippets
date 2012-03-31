@@ -64,10 +64,12 @@ else {
 	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Snippet_Functions.php');
 	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Snippet.php');
 	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Ajax.php');
+	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Snippet_Widget.php');
 
 	add_filter('mce_external_plugins', 'PHP_Snippet_Functions::tinyplugin_register');
 	add_filter('mce_buttons', 'PHP_Snippet_Functions::tinyplugin_add_button', 0);
 	add_action('init','PHP_Snippet_Functions::init');
+	add_action('widgets_init', 'PHP_Snippet_Widget::register_this_widget');
 }
 
 

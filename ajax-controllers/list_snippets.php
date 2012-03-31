@@ -1,6 +1,7 @@
 <?php
 /*------------------------------------------------------------------------------
-Fires when a user clicks the button in the TinyMCE editor.
+Fires when a user clicks the button in the TinyMCE editor:
+this launches the thickbox pop-up that displays the list of all available snippets.
 ------------------------------------------------------------------------------*/
 if (!defined('PHP_SNIPPETS_PATH')) exit('No direct script access allowed');
 if (!current_user_can('edit_posts')) die('You do not have permission to do that.');

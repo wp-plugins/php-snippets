@@ -75,7 +75,7 @@ class PHP_Snippet_Functions {
 		}
 		// *NIX requires that the directory is executable
 		if ( !preg_match('/^WIN/i', PHP_OS) && !is_executable($dir)) {
-			self::register_warning(sprintf(__('Directory is not executable! %s  Please adjust your file permisions', 'php_snippets'), "<code>$dir</code>"));
+			self::register_warning(sprintf(__('Directory is not executable! %s  Please adjust your file permisions.', 'php_snippets'), "<code>$dir</code>"));
 			return false;
 		}
 		
@@ -123,7 +123,8 @@ class PHP_Snippet_Functions {
 	 *
 	 * @param	boolean	$force_scan if true, the directories will be re-scanned, otherwise, 
 	 *					cached data is used.
-	 * @return	array. On errors, an empty array is returned and warnings are registered.
+	 * @return	array. shortname => Info
+	 *			On errors, an empty array is returned and warnings are registered.
 	 */
 	public static function get_snippets($force_scan=false) {
 		//if ($force_scan) {
@@ -170,7 +171,7 @@ class PHP_Snippet_Functions {
 				}
 			}
 		}
-		
+		//die(print_r(self::$snippets,true));
 		return self::$snippets;
 	}
 	
