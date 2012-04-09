@@ -6,13 +6,13 @@ Requires at least: 3.0
 Tested up to: 3.3.1
 Stable tag: 0.7
 
-Provides an interface for developers to easily add PHP code to their posts via selectable shortcodes.
+Provides an interface for developers to easily add PHP code to posts and widgets via selectable shortcodes.
 
 == Description ==
 
 http://www.youtube.com/watch?v=03yDdrhOSN4
 
-This plugin allows developers to easily add PHP code to their posts and pages.  All *.snippet.php* files contained in the configured directory will be executable via a corresponding [shortcode].  For example, a file named *my-code.snippet.php* can be executed by adding a [my-code] shortcode to your post content.  The source directory is configurable: you can put it anywhere on your server that you wish, e.g. you can enhance the security of your code by storing it _outside_ your server's document root.  
+This plugin allows developers to easily add PHP code to their posts and widgets.  All *.snippet.php* files contained in the configured directory will be executable via a corresponding [shortcode].  For example, a file named *my-code.snippet.php* can be executed by adding a [my-code] shortcode to your post content.  The source directory is configurable: you can put it anywhere on your server that you wish, e.g. you can enhance the security of your code by storing it _outside_ your server's document root.  
 
 By keeping all the PHP code in PHP files, you ensure that your WordPress posts and pages remain clean.  All available shortcodes are listed when the user clicks a custom TinyMCE button.
 
@@ -20,11 +20,11 @@ See the [Project Home Page](http://code.google.com/p/wordpress-php-snippets/) fo
 
 This plugin can save you from writing lots of other plugins because you can easily tie into PHP files without having to register your own plugins.
 
+WARNING: this has not been tested on Windows servers.  Sorry, but I don't have access to one, so I've been unable to tune the permissions checks.
 
 == Installation ==
 
 You can install this plugin in the standard way from the WordPress plugin admin screen, or you can download its files and upload the `php-snippets` folder to the `/wp-content/plugins/` directory.  
-
 
 1. Upload the `php-snippets` directory to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
