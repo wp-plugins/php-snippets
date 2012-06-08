@@ -146,7 +146,6 @@ class PHP_Snippet_Functions {
 			}
 			
 			$rawfiles = @scandir($dir);
-			
 
 			foreach ($rawfiles as $f) {
 				// Check immediate sub-dirs
