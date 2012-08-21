@@ -3,8 +3,8 @@ Contributors: fireproofsocks
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WPR4A9JT355BE
 Tags: php, exec, snippet, code
 Requires at least: 3.0
-Tested up to: 3.3.1
-Stable tag: 0.7
+Tested up to: 3.4.1
+Stable tag: 0.8
 
 Provides an interface for developers to easily add PHP code to posts and widgets via selectable shortcodes.
 
@@ -78,6 +78,12 @@ Check to make sure the bug is actually in the plugin and not in one of your Snip
 
 == Changelog ==
 
+= 0.8 =
+
+* Improved permissions checking in Windows environments.
+* General cleanup.
+
+
 = 0.7 =
 
 More thorough permissions checking of the configured directories, added some snippets.
@@ -91,6 +97,10 @@ Worked out some bugs, cleaned this thing up for the prom.
 
 
 == Upgrade Notice ==
+
+= 0.8 =
+
+Improved permissions checking in Windows environments.  General fixes.
 
 = 0.7 =
 
