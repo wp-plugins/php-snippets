@@ -70,6 +70,7 @@ class PHP_Snippet_Widget extends WP_Widget {
 			<br/>
 			
 			<label class="php_snippets_label" for="'.$this->get_field_id('content').'">'.__('Widget Content', 'php_snippets').'</label>
+			<p>'.__('Modify your shortcode below', 'php_snippets').'</p>
 			
 			<textarea name="'.$this->get_field_name('content').'" id="'.$this->get_field_id('content').'" rows="3" cols="30">'.$instance['content'].'</textarea>
 			';

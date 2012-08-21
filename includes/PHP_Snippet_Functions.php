@@ -59,9 +59,10 @@ class PHP_Snippet_Functions {
 
 
 	/**
-	 * Test out a given directory to make sure it is legit.
+	 * Test out a given directory to make sure it has the correct permissions
+	 *
 	 * @param	string	full path to directory to check.
-	 * @return	boolean	true on success, false on failure
+	 * @return	boolean	true on success (permissions are ok), false on failure (permissions are borked)
 	 */
 	public static function check_permissions($dir) {
 		if (!file_exists($dir)) {
@@ -74,11 +75,27 @@ class PHP_Snippet_Functions {
 			return false;		
 		}
 		// *NIX requires that the directory is executable
-		if ( !preg_match('/^WIN/i', PHP_OS) && !is_executable($dir)) {
-			self::register_warning(sprintf(__('Directory is not executable! %s  Please adjust your file permisions.', 'php_snippets'), "<code>$dir</code>"));
-			return false;
+		if (!preg_match('/^WIN/i', PHP_OS)) {
+			if (!is_executable($dir)) {
+				self::register_warning(sprintf(__('Directory is not executable! %s  Please adjust your file permisions.', 'php_snippets'), "<code>$dir</code>"));
+				return false;
+			}
+			else {
+				return true;
+			}
 		}
-		
+		// Windows (not tested much)
+		elseif (preg_match('/^WIN/i', PHP_OS)) {
+			if (!is_writable($dir)) {
+				self::register_warning(sprintf(__('Directory is not writable! %s  Please adjust your file permisions.', 'php_snippets'), "<code>$dir</code>"));
+				return false;				
+			}
+			else {
+				return true;
+			}
+		}
+
+		// Assume that permissions are Ok
 		return true;
 	}
 	
@@ -132,13 +149,14 @@ class PHP_Snippet_Functions {
 
 		//}
 		// Scan built-in directory
+		$dirs = array();
 		$dirs[] = PHP_SNIPPETS_PATH .'/snippets';
 		
 		$user_dir = self::get_value(self::$data, 'snippet_dir', '');
 		if (!empty($user_dir)){
 			$dirs[] = $user_dir;
 		}
-		
+
 		foreach($dirs as $dir){
 
 			if (!self::check_permissions($dir)) {
@@ -151,20 +169,23 @@ class PHP_Snippet_Functions {
 				// Check immediate sub-dirs
 				if (is_dir($dir.'/'.$f)) { 
 					$raw_subfiles = scandir($dir.'/'.$f);
-					foreach ($raw_subfiles as $sf) {
-						if ( !preg_match('/^\./', $sf) && preg_match('/\.snippet\.php$/', $sf) ) {
-							$shortname = basename($sf);
+					foreach ($raw_subfiles as $subfile) {
+						if ( !preg_match('/^\./', $subfile) && preg_match('/\.snippet\.php$/', $subfile) ) {
+							$shortname = basename($subfile);
 							$shortname = preg_replace('/\.snippet\.php$/', '', $shortname);
-							$path = $dir.'/'.$sf; // store the path to snippet
+							$path = $dir.'/'.$f.'/'.$subfile; // store the path to snippet
 							self::$snippets[$shortname] = self::get_snippet_info($path);
 						}				
 					}
 				}
+				// Or check files inside the main snippet directory
 				else {
 					if ( !preg_match('/^\./', $f) && preg_match('/\.snippet\.php$/', $f) ) {
+
 						$shortname = basename($f);
 						$shortname = preg_replace('/\.snippet\.php$/', '', $shortname);
 						$path = $dir.'/'.$f; // store the path to snippet
+
 						self::$snippets[$shortname] = self::get_snippet_info($path);
 					}			
 				}
@@ -295,7 +316,7 @@ class PHP_Snippet_Functions {
 	 * @param	string	$msg	 the localized error message.
 	 */
 	public static function register_warning($msg) {
-		self::$warnings[$msg] = 1; // ensure warnings are duplicated
+		self::$warnings[$msg] = 1; // ensure warnings are not duplicated
 	}
 	
 	//------------------------------------------------------------------------------
@@ -309,6 +330,8 @@ class PHP_Snippet_Functions {
 	//------------------------------------------------------------------------------
 	/**
 	 * Adds the button to the TinyMCE 1st row.
+	 * @param array $buttons
+	 * @return array
 	 */
 	public static function tinyplugin_add_button($buttons) {
 	    array_push($buttons, '|', 'php_snippets');
@@ -317,15 +340,12 @@ class PHP_Snippet_Functions {
 	
 	//------------------------------------------------------------------------------
 	/**
-	 * 
+	 * @param array $plugin_array
+	 * @return array
 	 */
 	public static function tinyplugin_register($plugin_array) {
 	    $url = PHP_SNIPPETS_URL.'/js/editor_plugin.js';
 	    $plugin_array['php_snippets'] = $url;
-/*		$fp = fopen('/tmp/wp.txt', 'a');
-		fwrite($fp, print_r($plugin_array, true));
-		fclose($fp);
-*/
 	    return $plugin_array;
 	}
 

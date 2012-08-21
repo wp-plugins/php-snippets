@@ -14,9 +14,12 @@
 	}
 </style>
 
-<h2><?php print $data['pagetitle']; ?></h2>
+<h2><?php print $data['pagetitle']; ?> 
+			<a href="http://code.google.com/p/wordpress-php-snippets/wiki/SnippetSelector" target="_new" title="Contextual Help" style="text-decoration: none;">
+				<img src="<?php print PHP_SNIPPETS_URL; ?>/images/question-mark.gif" width="16" height="16" />
+			</a></h2>
 
-<p>Below are listed PHP Snippets that you have installed on your site.  Select one to add its shortcode to your post or page.  If you would like to add your own PHP Snippets to this list, simply create a PHP file in the <strong>wp-content/plugins/php-snippets/snippets</strong> directory and save it using a <code>.snippet.php</code> extension.</p>
+<p>Below are listed PHP Snippets that you have installed on your site.  Select one to add its shortcode to your post or page.  If you would like to add your own PHP Snippets to this list, simply create a PHP file in your snippet directory and save it using a <code>.snippet.php</code> extension. (See <strong>Settings &rarr; PHP Snippets</strong> to configure your Snippet directory).</p>
 
 <ul>
 <?php print $data['content']; ?>

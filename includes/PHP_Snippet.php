@@ -15,6 +15,7 @@ class PHP_Snippet {
 
 	/**
 	 * This is the function that dynamically handles all shortcodes.
+	 *
 	 * @param string $name
 	 * @param mixed $args
 	 */
@@ -38,12 +39,12 @@ class PHP_Snippet {
 			return $content;
 		}
 		else {
-			return sprintf(__('PHP Snippet does not exist %s', 'php_snippets'), $name);
+			return sprintf(__('PHP Snippet does not exist: %s', 'php_snippets'), "<code>$name</code>");
 		}
 	}
 
 	/**
-	 * Register all shortcodes.
+	 * Register all shortcodes.  A shortcode is registered for each valid snippet file.
 	 */
 	public function __construct() {
 		// Register the shortcodes
