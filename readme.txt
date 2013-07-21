@@ -3,8 +3,8 @@ Contributors: fireproofsocks
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WPR4A9JT355BE
 Tags: php, exec, snippet, code
 Requires at least: 3.0
-Tested up to: 3.4.1
-Stable tag: 0.8
+Tested up to: 3.5.2
+Stable tag: 0.9
 
 Provides an interface for developers to easily add PHP code to posts and widgets via selectable shortcodes.
 
