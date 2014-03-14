@@ -43,6 +43,12 @@ foreach (PHP_Snippet_Functions::$existing_shortcodes as $shortname) {
 */
 
 // Use us a template
-print PHP_Snippet_Functions::load_view('thickbox.php', $data);
+$php_license = PHP_License::edd_check_license();
+
+if($php_license->license != 'valid') {
+	PHP_license::inactive_page();
+} else {
+	print PHP_Snippet_Functions::load_view('thickbox.php', $data);
+}
 
 /*EOF*/

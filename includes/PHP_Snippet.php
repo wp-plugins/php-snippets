@@ -51,7 +51,12 @@ class PHP_Snippet {
 		$this->snippets = (array) PHP_Snippet_Functions::get_snippets(); //array(); // get snippets
 		foreach ($this->snippets as $name => $data) {
 			if (!in_array($name, PHP_Snippet_Functions::$existing_shortcodes)) {
-				add_shortcode( $name , array($this, $name));
+				
+				$php_license = PHP_License::edd_check_license();
+				if($php_license->license == 'valid') {
+					add_shortcode( $name , array($this, $name));
+				}
+				
 			}
 			else {
 				$msg = sprintf(__('The name %s is already taken by an existing shortcode. Please re-name your file.', 'php_snippets'), "<em>$name</em>");

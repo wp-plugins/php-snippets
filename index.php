@@ -65,6 +65,7 @@ else {
 	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Snippet.php');
 	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Ajax.php');
 	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Snippet_Widget.php');
+	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_license.php');
 
 	add_filter('mce_external_plugins', 'PHP_Snippet_Functions::tinyplugin_register');
 	add_filter('mce_buttons', 'PHP_Snippet_Functions::tinyplugin_add_button', 0);

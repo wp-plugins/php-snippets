@@ -19,30 +19,36 @@ $data['nonce_name']  = 'php_snippets_settings_nonce';
 
 
 $data['value'] = self::get_value(self::$data, 'snippet_dir');
+$php_license = PHP_License::edd_check_license();
+PHP_license::activate_license_page();
+if($php_license->license != 'valid') {
+	PHP_license::inactive_page();
+} else {
 
-// Save if submitted...
-if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_name']) ) {
-	// A little cleanup before we handoff to save_definition_filter
-	$snippet_dir = trim(strip_tags(self::get_value($_POST, 'snippet_dir')));
+	// Save if submitted...
+	if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_name']) ) {
+		// A little cleanup before we handoff to save_definition_filter
+		$snippet_dir = trim(strip_tags(self::get_value($_POST, 'snippet_dir')));
 
-	if (!PHP_Snippet_Functions::check_permissions($snippet_dir)){
-		if (!empty(PHP_Snippet_Functions::$warnings)) {
-			$data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
-			foreach (PHP_Snippet_Functions::$warnings as $w => $tmp) {
-				$data['content'] .= sprintf('<li>%s</li>', $w);
+		if (!PHP_Snippet_Functions::check_permissions($snippet_dir)){
+			if (!empty(PHP_Snippet_Functions::$warnings)) {
+				$data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
+				foreach (PHP_Snippet_Functions::$warnings as $w => $tmp) {
+					$data['content'] .= sprintf('<li>%s</li>', $w);
+				}
+				$data['content'] .= '<ul></p></div>';	
 			}
-			$data['content'] .= '<ul></p></div>';	
+		}
+		else {
+			$data['msg'] = sprintf('<div class="updated"><p>%s</p></div>', 'Your settings have been updated!');
+			self::$data['snippet_dir'] = $snippet_dir;
+			update_option(self::db_key, self::$data);
+			$data['value'] = $snippet_dir;
 		}
 	}
-	else {
-		$data['msg'] = sprintf('<div class="updated"><p>%s</p></div>', 'Your settings have been updated!');
-		self::$data['snippet_dir'] = $snippet_dir;
-		update_option(self::db_key, self::$data);
-		$data['value'] = $snippet_dir;
-	}
+	$data['content'] .= self::load_view('settings.php', $data);
+
+	print self::load_view('default.php', $data);
+
 }
-
-$data['content'] .= self::load_view('settings.php', $data);
-
-print self::load_view('default.php', $data);
 /*EOF*/
