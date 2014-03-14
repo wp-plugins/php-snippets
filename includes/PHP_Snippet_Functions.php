@@ -153,6 +153,8 @@ class PHP_Snippet_Functions {
 		$dirs[] = PHP_SNIPPETS_PATH .'/snippets';
 		
 		$user_dir = self::get_value(self::$data, 'snippet_dir', '');
+		$suffix = self::get_value(self::$data, 'snippet_suffix','');
+	
 		if (!empty($user_dir)){
 			$dirs[] = $user_dir;
 		}
@@ -164,34 +166,45 @@ class PHP_Snippet_Functions {
 			}
 			
 			$rawfiles = @scandir($dir);
-
+			
+			
+			
 			foreach ($rawfiles as $f) {
+				//echo $f;
 				// Check immediate sub-dirs
-				if (is_dir($dir.'/'.$f)) { 
+				/*if (is_dir($dir.'/'.$f)) { 
 					$raw_subfiles = scandir($dir.'/'.$f);
+					
+					
 					foreach ($raw_subfiles as $subfile) {
-						if ( !preg_match('/^\./', $subfile) && preg_match('/\.snippet\.php$/', $subfile) ) {
+
+						if ( !preg_match('/^\./', $subfile) && strpos($subfile, $suffix) ) {
+
 							$shortname = basename($subfile);
-							$shortname = preg_replace('/\.snippet\.php$/', '', $shortname);
+							$shortname = str_replace($suffix, '', $shortname);
 							$path = $dir.'/'.$f.'/'.$subfile; // store the path to snippet
 							self::$snippets[$shortname] = self::get_snippet_info($path);
 						}				
 					}
-				}
+				}*/
 				// Or check files inside the main snippet directory
-				else {
-					if ( !preg_match('/^\./', $f) && preg_match('/\.snippet\.php$/', $f) ) {
+				//else {
+					if ( !preg_match('/^\./', $f) && strpos($f, $suffix) ) {
 
 						$shortname = basename($f);
-						$shortname = preg_replace('/\.snippet\.php$/', '', $shortname);
+						$shortname =str_replace($suffix, '', $shortname);
 						$path = $dir.'/'.$f; // store the path to snippet
 
 						self::$snippets[$shortname] = self::get_snippet_info($path);
 					}			
-				}
+				//}
 			}
+
 		}
 		//die(print_r(self::$snippets,true));
+		/*echo '<pre>';
+		print_r(self::$snippets);
+		die();*/
 		return self::$snippets;
 	}
 	
