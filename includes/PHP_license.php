@@ -10,6 +10,10 @@ class PHP_License {
 
 	public function __construct() 
 	{	
+/*		delete_option( 'php_edd_license_key' );
+		delete_option( 'php_edd_license_status' );
+		delete_transient(strtolower(str_replace(' ', '_', self::$plugin)) );
+		die();*/
 		$this->edd_register_option();
 		$this->edd_activate_license();
 	}
@@ -37,7 +41,7 @@ class PHP_License {
 							<td>
 								<input id="php_edd_license_key" name="php_edd_license_key" type="text" class="regular-text" value="<?php esc_attr_e( $license ); ?>" />
 								<input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
-						
+
 							</td>
 						</tr>
 						<?php if( false !== $license ) { ?>
@@ -56,8 +60,7 @@ class PHP_License {
 							</tr>
 						<?php } ?>
 					</tbody>
-				</table>	
-				
+				</table>
 			
 			</form>
 		<?php
@@ -65,7 +68,7 @@ class PHP_License {
 
 	public static function inactive_page() {
 		?>
-		<div id="php-warning" class="updated fade"><p><strong>PHP Snippets is almost ready.</strong> You must enter your License key for it to work and show PHP Snippets Setting.</p></div>
+		<div id="php-warning" class="updated fade"><p><strong>php is almost ready.</strong> You must <a href="admin.php?page=php_fields-activate">enter your License key</a> for it to work and show More php Setting Pages.</p></div>
 		<?php 
 	}
 
@@ -74,6 +77,7 @@ class PHP_License {
 	**/
 	public static function edd_register_option() {
 		// creates our settings in the options table
+
 		register_setting('php_license', 'php_edd_license_key', array('PHP_License','edd_sanitize_license'));
 	}
 
@@ -108,7 +112,6 @@ class PHP_License {
 		// listen for our activate button to be clicked
 		if( isset( $_POST['edd_license_activate'] ) ) {
 
-	 
 			// run a quick security check 
 		 	if( ! check_admin_referer( 'edd_nonce', 'edd_nonce' ) ) 	
 				return; // get out if we didn't click the Activate button
@@ -147,39 +150,40 @@ class PHP_License {
 	* cache the result using set_transient
 	**/
 	public static function edd_check_license() {	
-		$cache_key = 'edd_license-'.strtolower(str_replace(' ', '_', self::$plugin));
+		$license = trim( get_option( 'php_edd_license_key' ) );
+		$status 	= get_option( 'php_edd_license_status' );
+		$cache_key = strtolower(str_replace(' ', '_', self::$plugin));
 		$data = get_transient( $cache_key );
 		$key_old = trim( get_option( 'php_edd_license_key' ) );
-
-		if ($data && $key_old == $data->key) {
-			return $data;
-			exit;
-		}
-		// retrieve the license from the database
-		$license = trim( get_option( 'php_edd_license_key' ) );
-			
-		// data to send in our API request
-		$api_params = array( 
-			'edd_action'=> 'check_license', 
-			'license' 	=> $license, 
-			'item_name' => urlencode( self::$plugin ), // the name of our product in EDD,
-			'url'       => home_url()
-		);
 	
-		// Call the custom API.
-		$response = wp_remote_get( add_query_arg( $api_params, self::$edd_store ) );
- 
-		// make sure the response came back okay
-		if ( is_wp_error( $response ) )
-			return false;
-		$data = json_decode( wp_remote_retrieve_body( $response ) );
-		$data->key = trim( get_option( 'php_edd_license_key' ) );
+		if ($data && $key_old == $data->key) {
+			return $status;
+		} else {
+			// data to send in our API request
+			$api_params = array( 
+				'edd_action'=> 'check_license', 
+				'license' 	=> $license, 
+				'item_name' => urlencode( self::$plugin ), // the name of our product in EDD,
+				'url'       => home_url()
+			);
+		
+			// Call the custom API.
+			$response = wp_remote_get( add_query_arg( $api_params, self::$edd_store ) );
+	 
+			// make sure the response came back okay
+			if ( is_wp_error( $response ) )
+				return false;
+			$data = json_decode( wp_remote_retrieve_body( $response ) );
+			$data->key = trim( get_option( 'php_edd_license_key' ) );
 
- 		set_transient( $cache_key, $data, 60*60 );
-		return $data;			
+	 		set_transient( $cache_key, $data, 60*60 );
+			return $status;	
+		}
+				
 	}
 
 }
+
 //register setting
 add_action('admin_init', function(){
 	new PHP_License();

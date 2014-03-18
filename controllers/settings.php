@@ -22,7 +22,7 @@ $data['value'] = self::get_value(self::$data, 'snippet_dir');
 $data['snippet_suffix'] = self::get_value(self::$data, 'snippet_suffix');
 $php_license = PHP_License::edd_check_license();
 PHP_license::activate_license_page();
-if($php_license->license != 'valid') {
+if($php_license != 'valid') {
 	PHP_license::inactive_page();
 } else {
 
