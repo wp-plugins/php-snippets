@@ -52,7 +52,7 @@ class PHP_Snippet {
 		foreach ($this->snippets as $name => $data) {
 			if (!in_array($name, PHP_Snippet_Functions::$existing_shortcodes)) {
 				
-				$php_license = PHP_License::edd_check_license();
+				$php_license = PhpSnippets\License::edd_check_license();
 				if($php_license == 'valid') {
 					add_shortcode( $name , array($this, $name));
 				}

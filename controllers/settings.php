@@ -1,9 +1,8 @@
 <?php
-//if ( ! defined('CCTM_PATH')) exit('No direct script access allowed');
-if (!current_user_can('administrator')) exit('Admins only.');
 /*------------------------------------------------------------------------------
-Define settings for the PHP Snippets plugin. 
+Handles the Settings page for this plugin where users can edit various options
 ------------------------------------------------------------------------------*/
+if (!current_user_can('administrator')) exit('Admins only.');
 
 // Page variables
 $data = array();
@@ -20,10 +19,10 @@ $data['nonce_name']  = 'php_snippets_settings_nonce';
 
 $data['value'] = self::get_value(self::$data, 'snippet_dir');
 $data['snippet_suffix'] = self::get_value(self::$data, 'snippet_suffix');
-$php_license = PHP_License::edd_check_license();
-PHP_license::activate_license_page();
+$php_license = PhpSnippets\License::edd_check_license();
+PhpSnippets\License::activate_license_page();
 if($php_license != 'valid') {
-	PHP_license::inactive_page();
+	PhpSnippets\License::inactive_page();
 } else {
 
 	// Save if submitted...

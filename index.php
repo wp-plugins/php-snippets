@@ -53,25 +53,25 @@ function php_snippets_print_notices() {
 //  plugin_dir_path(__FILE__)
 //------------------------------------------------------------------------------
 // Fail with message if there are errors.
-if (!empty($php_snippet_errors)) {
+//if (!empty($php_snippet_errors)) {
 	add_action( 'admin_notices', 'php_snippets_print_notices');
-}
+//}
 // Load up if there were no errors
-else {
+//else {
 	define('PHP_SNIPPETS_PATH', dirname(__FILE__) );
 	define('PHP_SNIPPETS_URL', WP_PLUGIN_URL .'/'. basename( PHP_SNIPPETS_PATH ) );
 
-	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Snippet_Functions.php');
-	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Snippet.php');
-	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Ajax.php');
-	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_Snippet_Widget.php');
-	require_once( PHP_SNIPPETS_PATH . '/includes/PHP_license.php');
+	require_once PHP_SNIPPETS_PATH . '/includes/PHP_Snippet_Functions.php';
+	require_once PHP_SNIPPETS_PATH . '/includes/PHP_Snippet.php';
+	require_once PHP_SNIPPETS_PATH . '/includes/PHP_Ajax.php';
+	require_once PHP_SNIPPETS_PATH . '/includes/PHP_Snippet_Widget.php';
+	require_once PHP_SNIPPETS_PATH . '/includes/PHP_License.php';
 
 	add_filter('mce_external_plugins', 'PHP_Snippet_Functions::tinyplugin_register');
 	add_filter('mce_buttons', 'PHP_Snippet_Functions::tinyplugin_add_button', 0);
 	add_action('init','PHP_Snippet_Functions::init');
 	add_action('widgets_init', 'PHP_Snippet_Widget::register_this_widget');
-}
+//}
 
 
 /*EOF*/

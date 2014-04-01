@@ -1,9 +1,11 @@
 <?php
 /**
 * EDD Licence Class
-* ACtivate And Check License key
+* Activate And Check License key
 **/
-class PHP_License {
+namespace PhpSnippets;
+
+class License {
 
 	public static $edd_store = 'http://wpcctm.com/'; // store_url
 	public static $plugin = 'PHP Snippets'; // item name from store
@@ -186,5 +188,5 @@ class PHP_License {
 
 //register setting
 add_action('admin_init', function(){
-	new PHP_License();
+	new License();
 });

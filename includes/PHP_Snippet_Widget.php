@@ -101,7 +101,7 @@ class PHP_Snippet_Widget extends WP_Widget {
 	//------------------------------------------------------------------------------
 	//! Static
 	public static function register_this_widget() {
-		$php_license = PHP_License::edd_check_license();
+		$php_license = PhpSnippets\License::edd_check_license();
 		if($php_license == 'valid') {
 			register_widget(__CLASS__);
 		}
