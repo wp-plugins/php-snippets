@@ -78,6 +78,11 @@ Check to make sure the bug is actually in the plugin and not in one of your Snip
 
 == Changelog ==
 
+= 1.0 =
+
+* Configurable suffix, so now your snippets need not use the '.snippet.php' extension.
+* Pay-what-you-like licensing added. 
+
 = 0.8 =
 
 * Improved permissions checking in Windows environments.

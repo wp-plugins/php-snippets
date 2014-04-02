@@ -12,12 +12,10 @@ class License {
     public static $key_option_name = 'php_snippets_license_key';
     public static $status_option_name = 'php_snippets_license_status';
     
-	public function __construct() 
-	{	
-		//$this->register_option();
-		//$this->activate(); // should only run when data is posted
-	}
-
+    public static function get_status() {
+        return get_option(self::$status_option_name);
+    }
+    
 	/**
 	 * Get any form fields needed for the licensing
 	 * Note that this form defines an alternate submit button:
@@ -25,7 +23,7 @@ class License {
 	 */
 	public static function get_fields() {
 		$license 	= get_option( self::$key_option_name );
-		$status 	= get_option( self::$status_option_name );
+		$status 	= self::get_status();
 		?>
 		<div class="wrap php_snippets_licensing_info" style="border:1px dotted gray; padding:10px; margin:10px;">
 			<h3><?php _e('Plugin PHP Snippets License Options'); ?><a href="https://code.google.com/p/wordpress-php-snippets/wiki/LicenseActivation" target="_new" title="Contextual Help" style="text-decoration: none;">
@@ -35,19 +33,24 @@ class License {
             <label for="snippet_dir" class="php_snippets_label"><?php _e('License Key'); ?></label>
         	<input type="text" name="license_key" id="license_key" size="30" value="<?php esc_attr_e($license); ?>"/>
             <br/><br/>
-            <label for="license_status" class="php_snippets_label"><?php _e('License Status'); ?>:
+            
                 <?php if($status == 'valid') : ?>
-                    <span style="color:green; font-weight:bold;"><?php _e('Active'); ?></span>
+                    <label for="license_status" class="php_snippets_label">
+                        <?php _e('License Status'); ?>:
+                        <span style="color:green; font-weight:bold;"><?php _e('Active'); ?></span>
+                    </label>
+                    
+                    <p class="description">Your license is valid for this site.  Thank you for your business!</p>
                 <?php else: ?>
-                    <span style="color:red; font-weight:bold;" class="php_snippets_invalid_license"><?php _e('Invalid'); ?></span>
+                    <label for="license_status" class="php_snippets_label">
+                        <?php _e('License Status'); ?>:
+                        <span style="color:red; font-weight:bold;" class="php_snippets_invalid_license"><?php _e('Invalid'); ?></span>
+                    </label>
+                    <input type="submit" class="button-secondary" name="activate_license" value="<?php _e('Activate License'); ?>"/>
+                    <p class="description">This plugin requires a license.  There is no fixed price. You can pay any amount that you feel is fair, <em>including free</em>. Don't be shy, <a href="http://craftsmancoding.com/products/downloads/php-snippets/">Get a License Key</a>, then paste it here!</p>
                 <?php endif; ?>            
-            </label>
             
-            <?php if($status != 'valid') : ?>
-                <input type="submit" class="button-secondary" name="activate_license" value="<?php _e('Activate License'); ?>"/>
-            <?php endif; ?>
             
-            <p class="description">This plugin requires a license.  There is no fixed price. You can pay any amount that you feel is fair, including free. Don't be shy, <a href="http://craftsmancoding.com/products/downloads/php-snippets/">Get a License Key Here</a>!</p>
         </div>
 
 		<?php
@@ -126,7 +129,7 @@ class License {
 		if (empty($license_data) || !is_object($license_data)) return false;
 		// $license_data->license will be either "valid" or "invalid".  Should be named "status" :(
 		update_option(self::$status_option_name, $license_data->license);
- 
+		return true;
 	}
 
 	/**
@@ -168,8 +171,3 @@ class License {
 	}
 
 }
-
-//register setting
-add_action('admin_init', function(){
-	new License();
-});

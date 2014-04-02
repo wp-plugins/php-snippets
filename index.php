@@ -31,7 +31,8 @@ function php_snippets_print_notices() {
 	global $php_snippet_errors;
 
     $php_license = PhpSnippets\License::check();
-    if($php_license != 'valid') {
+    // Don't show this when we're posting data
+    if($php_license != 'valid' && empty($_POST)) {
         print PhpSnippets\License::get_error_msg();
     }
 	
