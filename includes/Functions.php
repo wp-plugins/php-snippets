@@ -14,7 +14,8 @@
  
  *
  */
-class PHP_Snippet_Functions {
+namespace PhpSnippets; 
+class Functions {
 
 	/**
 	 * Contains the Ajax object (PHP_Ajax)
@@ -54,7 +55,7 @@ class PHP_Snippet_Functions {
 
 
 	public static function add_menu() {
-		add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 'php-snippets', 'PHP_Snippet_Functions::settings');
+		add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 'php-snippets', 'PhpSnippets\Functions::settings');
 	}
 
 
@@ -65,6 +66,7 @@ class PHP_Snippet_Functions {
 	 * @return	boolean	true on success (permissions are ok), false on failure (permissions are borked)
 	 */
 	public static function check_permissions($dir) {
+        $dir = self::parse_dirname($dir);
 		if (!file_exists($dir)) {
 			// throw error!
 			self::register_warning(sprintf(__('Directory does not exist! %s', 'php_snippets'), "<code>$dir</code>"));
@@ -74,26 +76,6 @@ class PHP_Snippet_Functions {
 			self::register_warning(sprintf(__('The selected Snippet directory must be a directory, not a file! %s', 'php_snippets'), "<code>$dir</code>"));
 			return false;		
 		}
-		// *NIX requires that the directory is executable
-		if (!preg_match('/^WIN/i', PHP_OS)) {
-			if (!is_executable($dir)) {
-				self::register_warning(sprintf(__('Directory is not executable! %s  Please adjust your file permisions.', 'php_snippets'), "<code>$dir</code>"));
-				return false;
-			}
-			else {
-				return true;
-			}
-		}
-		// Windows (not tested much)
-		elseif (preg_match('/^WIN/i', PHP_OS)) {
-			if (!is_writable($dir)) {
-				self::register_warning(sprintf(__('Directory is not writable! %s  Please adjust your file permisions.', 'php_snippets'), "<code>$dir</code>"));
-				return false;				
-			}
-			else {
-				return true;
-			}
-		}
 
 		// Assume that permissions are Ok
 		return true;
@@ -102,14 +84,13 @@ class PHP_Snippet_Functions {
 	/**
 	 * Create custom post-type menu
 	 */
-	public static function create_admin_menu()
-	 {
+	public static function create_admin_menu() {
 	 	add_options_page( 
 	 		'PHP Snippets', 					// page title
 	 		'PHP Snippets', 					// menu title
 			'manage_options', 					// capability
 	 		'php_snippets', 					// menu slug
-	 		'PHP_Snippet_Functions::get_admin_page' // callback	 	
+	 		'PhpSnippets\Functions::get_admin_page' // callback	 	
 	 	);
 	}
 	
@@ -162,7 +143,7 @@ class PHP_Snippet_Functions {
 		foreach($dirs as $dir){
 
 			if (!self::check_permissions($dir)) continue;
-			
+			$dir = self::parse_dirname($dir);
 			$rawfiles = @scandir($dir);
 			
 			foreach ($rawfiles as $f) {
@@ -293,10 +274,10 @@ class PHP_Snippet_Functions {
 		//print '<pre>'; print_r($shortcode_tags); print '</pre>'; exit;
 		
 		// Add a menu item
-		add_action('admin_menu', 'PHP_Snippet_Functions::add_menu');
+		add_action('admin_menu', 'PhpSnippets\Functions::add_menu');
 		
-		self::$Snippet = new PHP_Snippet();
-		self::$Ajax = new PHP_Ajax();
+		self::$Snippet = new Snippet();
+		self::$Ajax = new Ajax();
 	}
 
 	//------------------------------------------------------------------------------
@@ -326,13 +307,23 @@ class PHP_Snippet_Functions {
 	public static function register_warning($msg) {
 		self::$warnings[$msg] = 1; // ensure warnings are not duplicated
 	}
+
+    //------------------------------------------------------------------------------
+    /**
+     * Parse a directory name -- this supports 
+     * @param stirng $dirname
+     * @return string $dirname
+     */
+	public static function parse_dirname($dirname) {
+        return str_replace('[+ABSPATH+]', ABSPATH, $dirname);
+	}     
 	
 	//------------------------------------------------------------------------------
 	/**
 	 * Generate the settings page
 	 */
 	public static function settings() {
-		include(PHP_SNIPPETS_PATH.'/controllers/settings.php');
+		include PHP_SNIPPETS_PATH.'/controllers/settings.php';
 	}
 	
 	//------------------------------------------------------------------------------
@@ -356,7 +347,5 @@ class PHP_Snippet_Functions {
 	    $plugin_array['php_snippets'] = $url;
 	    return $plugin_array;
 	}
-
-
 }
 /*EOF*/

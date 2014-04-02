@@ -3,7 +3,8 @@
  * This widget allows the user to choose a PHP Snippet to power a widget.
  *
  */
-class PHP_Snippet_Widget extends WP_Widget {
+namespace PhpSnippets; 
+class Widget extends \WP_Widget {
 
 	public $name;
 	public $description;
@@ -37,7 +38,7 @@ class PHP_Snippet_Widget extends WP_Widget {
 	 */
 	public function form($instance) {
 		
-		$snippets = PHP_Snippet_Functions::get_snippets(true);
+		$snippets = Functions::get_snippets(true);
 
 //		print_r($snippets); return;
 		$snippet_options = '<option></option>';
@@ -101,7 +102,7 @@ class PHP_Snippet_Widget extends WP_Widget {
 	//------------------------------------------------------------------------------
 	//! Static
 	public static function register_this_widget() {
-		$php_license = PhpSnippets\License::edd_check_license();
+		$php_license = License::check();
 		if($php_license == 'valid') {
 			register_widget(__CLASS__);
 		}

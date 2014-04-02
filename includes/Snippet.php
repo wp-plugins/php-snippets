@@ -8,8 +8,8 @@
  * @package php-snippets
  */
 
-
-class PHP_Snippet {
+namespace PhpSnippets;
+class Snippet {
 
 	public $snippets = array();
 
@@ -48,11 +48,11 @@ class PHP_Snippet {
 	 */
 	public function __construct() {
 		// Register the shortcodes
-		$this->snippets = (array) PHP_Snippet_Functions::get_snippets(); //array(); // get snippets
+		$this->snippets = (array) Functions::get_snippets(); //array(); // get snippets
 		foreach ($this->snippets as $name => $data) {
-			if (!in_array($name, PHP_Snippet_Functions::$existing_shortcodes)) {
+			if (!in_array($name, Functions::$existing_shortcodes)) {
 				
-				$php_license = PhpSnippets\License::edd_check_license();
+				$php_license = License::check();
 				if($php_license == 'valid') {
 					add_shortcode( $name , array($this, $name));
 				}
@@ -60,7 +60,7 @@ class PHP_Snippet {
 			}
 			else {
 				$msg = sprintf(__('The name %s is already taken by an existing shortcode. Please re-name your file.', 'php_snippets'), "<em>$name</em>");
-				PHP_Snippet_Functions::register_warning($msg);
+				Functions::register_warning($msg);
 			}
 
 		}

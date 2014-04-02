@@ -27,7 +27,13 @@ if ( version_compare( phpversion(), $required_php_version, '<') ) {
 //! Functions -- minimal for handling tests
 //------------------------------------------------------------------------------
 function php_snippets_print_notices() {
+
 	global $php_snippet_errors;
+
+    $php_license = PhpSnippets\License::check();
+    if($php_license != 'valid') {
+        print PhpSnippets\License::get_error_msg();
+    }
 	
 	if ( !empty($php_snippet_errors) ) {
 		$error_items = '';
@@ -52,26 +58,23 @@ function php_snippets_print_notices() {
 //! Load up!
 //  plugin_dir_path(__FILE__)
 //------------------------------------------------------------------------------
-// Fail with message if there are errors.
-//if (!empty($php_snippet_errors)) {
-	add_action( 'admin_notices', 'php_snippets_print_notices');
-//}
-// Load up if there were no errors
-//else {
-	define('PHP_SNIPPETS_PATH', dirname(__FILE__) );
-	define('PHP_SNIPPETS_URL', WP_PLUGIN_URL .'/'. basename( PHP_SNIPPETS_PATH ) );
+define('PHP_SNIPPETS_PATH', dirname(__FILE__) );
+define('PHP_SNIPPETS_URL', WP_PLUGIN_URL .'/'. basename( PHP_SNIPPETS_PATH ) );
+require_once PHP_SNIPPETS_PATH . '/includes/Functions.php';
+require_once PHP_SNIPPETS_PATH . '/includes/License.php';
 
-	require_once PHP_SNIPPETS_PATH . '/includes/PHP_Snippet_Functions.php';
-	require_once PHP_SNIPPETS_PATH . '/includes/PHP_Snippet.php';
-	require_once PHP_SNIPPETS_PATH . '/includes/PHP_Ajax.php';
-	require_once PHP_SNIPPETS_PATH . '/includes/PHP_Snippet_Widget.php';
-	require_once PHP_SNIPPETS_PATH . '/includes/PHP_License.php';
+add_action('admin_notices', 'php_snippets_print_notices');
 
-	add_filter('mce_external_plugins', 'PHP_Snippet_Functions::tinyplugin_register');
-	add_filter('mce_buttons', 'PHP_Snippet_Functions::tinyplugin_add_button', 0);
-	add_action('init','PHP_Snippet_Functions::init');
-	add_action('widgets_init', 'PHP_Snippet_Widget::register_this_widget');
-//}
+if (empty($php_snippet_errors)) {
+    require_once PHP_SNIPPETS_PATH . '/includes/Snippet.php';
+    require_once PHP_SNIPPETS_PATH . '/includes/Ajax.php';
+    require_once PHP_SNIPPETS_PATH . '/includes/Widget.php';
+    
+    add_filter('mce_external_plugins', 'PhpSnippets\Functions::tinyplugin_register');
+    add_filter('mce_buttons', 'PhpSnippets\Functions::tinyplugin_add_button', 0);
+    add_action('init','PhpSnippets\Functions::init');
+    add_action('widgets_init', 'PhpSnippets\Widget::register_this_widget');
+}
 
 
 /*EOF*/

@@ -12,11 +12,11 @@ $data['pagetitle'] = __('Select a Snippet', 'php_snippets');
 $data['content'] = '';
 $data['other_shortcodes'] = '';
 
-$snippets = PHP_Snippet_Functions::get_snippets(); 
+$snippets = PhpSnippets\Functions::get_snippets(); 
 
-if (!empty(PHP_Snippet_Functions::$warnings)) {
+if (!empty(PhpSnippets\Functions::$warnings)) {
 	$data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
-	foreach (PHP_Snippet_Functions::$warnings as $w => $tmp) {
+	foreach (PhpSnippets\Functions::$warnings as $w => $tmp) {
 		$data['content'] .= sprintf('<li>%s</li>', $w);
 	}
 	$data['content'] .= '<ul></p></div>';	
@@ -37,18 +37,18 @@ foreach($snippets as $shortname => $d) {
 }
 
 /*
-foreach (PHP_Snippet_Functions::$existing_shortcodes as $shortname) {
+foreach (PhpSnippets\Functions::$existing_shortcodes as $shortname) {
 	$data['other_shortcodes'] = '<strong class="linklike" onclick="javascript:insert_shortcode(\'['.$shortname.']\');">'.$shortname.'</strong><br/>';
 }
 */
 
 // Use us a template
-$php_license = PHP_License::edd_check_license();
+$php_license = PhpSnippets\License::check();
 
 if($php_license->license != 'valid') {
-	PHP_license::inactive_page();
+	PHP_license::get_error_msg();
 } else {
-	print PHP_Snippet_Functions::load_view('thickbox.php', $data);
+	print PhpSnippets\Functions::load_view('thickbox.php', $data);
 }
 
 /*EOF*/

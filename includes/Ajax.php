@@ -1,4 +1,5 @@
 <?php
+
 //------------------------------------------------------------------------------
 /**
  * This class handles Ajax requests. The problem here is that WP requires that 
@@ -28,9 +29,9 @@
  *
  * @package CCTM
  */
+namespace PhpSnippets;
 
-
-class PHP_Ajax {
+class Ajax {
 
 	/**
 	 * Contains key value pairs where key = basename of controller (no .php extension)
@@ -55,7 +56,7 @@ class PHP_Ajax {
 			die(sprintf(__('Invalid Ajax controller: %s', 'php_snippets'), "<em>$name</em>"));
 		}
 
-		// The nonce here should line up with the one localized in PHP_Snippet_Functions::init()
+		// The nonce here should line up with the one localized in Functions::init()
 		$nonce = '';
 		if (isset($_REQUEST[$name.'_nonce'])) {
 			$nonce = $_REQUEST[$name.'_nonce'];

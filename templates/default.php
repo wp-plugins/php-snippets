@@ -30,13 +30,13 @@
 	<?php /*--------------- FOOTER --------------------------*/ ?>
 	<div id="php_snippets_footer">
 		<p style="margin:10px;">
-			<span class="php_snippets_link">
-				<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WPR4A9JT355BE" target="_blank"><img class="php_snippets_img" src="<?php print PHP_SNIPPETS_URL; ?>/images/heart.png" height="32" width="32" alt="heart"/></a>
-				<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WPR4A9JT355BE" target="_blank"><?php _e('Support this Plugin', 'php_snippets'); ?></a>
-			</span>
+			<!--span class="php_snippets_link">
+				<a href="#" target="_blank"><img class="php_snippets_img" src="<?php print PHP_SNIPPETS_URL; ?>/images/heart.png" height="32" width="32" alt="heart"/></a>
+				<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WPR4A9JT355BE" target="_blank"><?php _e('Get Support', 'php_snippets'); ?></a>
+			</span-->
 			<span class="php_snippets_link">
 				<a href="http://code.google.com/p/wordpress-php-snippets/"><img class="php_snippets_img" src="<?php print PHP_SNIPPETS_URL; ?>/images/help.png" height="32" width="32" alt="help"/></a>
-				<a href="http://code.google.com/p/wordpress-php-snippets/"><?php _e('Help', 'php_snippets'); ?></a>
+				<a href="http://craftsmancoding.com/products/downloads/support/"><?php _e('Get Professional Help!', 'php_snippets'); ?></a>
 			</span>
 			<span class="php_snippets_link">
 				<a href="http://code.google.com/p/wordpress-php-snippets/issues/list"><img class="php_snippets_img" src="<?php print PHP_SNIPPETS_URL; ?>/images/bug.png" height="32" width="32" alt="bug"/></a>

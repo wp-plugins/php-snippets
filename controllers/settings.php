@@ -15,47 +15,52 @@ $data['submit'] = __('Save', 'php_snippets');
 $data['action_name']  = 'php_snippets_settings';
 $data['nonce_name']  = 'php_snippets_settings_nonce';
 
-
-
-$data['value'] = self::get_value(self::$data, 'snippet_dir');
+ob_start();
+PhpSnippets\License::get_fields();
+$data['licensing_fields'] = ob_get_clean();
+$data['snippet_dir'] = self::get_value(self::$data, 'snippet_dir', ABSPATH.'/wp-content/snippets/');
 $data['snippet_suffix'] = self::get_value(self::$data, 'snippet_suffix');
-$php_license = PhpSnippets\License::edd_check_license();
-PhpSnippets\License::activate_license_page();
-if($php_license != 'valid') {
-	PhpSnippets\License::inactive_page();
-} else {
 
-	// Save if submitted...
-	if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_name']) ) {
+//$php_license = PhpSnippets\License::check();
+//PhpSnippets\License::activate_page();
 
-		// A little cleanup before we handoff to save_definition_filter
-		$snippet_dir = trim(strip_tags(self::get_value($_POST, 'snippet_dir')));
-		$snippet_suffix = self::get_value($_POST, 'snippet_suffix');
-		$snippet_suffix = !empty($snippet_suffix) ? trim(strip_tags($snippet_suffix)) : '.snippet.php';
+// Save if submitted...
+if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_name']) ) {
+  
+    if (isset($_POST['activate_license'])) {
+        PhpSnippets\License::activate(self::get_value($_POST, 'license_key'));
+        // options-general.php?page=php-snippets
+        print '<script type="text/javascript">window.location.replace("'.get_admin_url(false, 'options-general.php?page=php-snippets').'");</script>';
+    }  
 
-		if (!PHP_Snippet_Functions::check_permissions($snippet_dir)){
-			if (!empty(PHP_Snippet_Functions::$warnings)) {
-				$data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
-				foreach (PHP_Snippet_Functions::$warnings as $w => $tmp) {
-					$data['content'] .= sprintf('<li>%s</li>', $w);
-				}
-				$data['content'] .= '<ul></p></div>';	
+	// A little cleanup before we handoff to save_definition_filter
+	$snippet_dir = trim(strip_tags(self::get_value($_POST, 'snippet_dir')));
+	$snippet_suffix = self::get_value($_POST, 'snippet_suffix');
+	$snippet_suffix = !empty($snippet_suffix) ? trim(strip_tags($snippet_suffix)) : '.snippet.php';
+
+
+	if (!PhpSnippets\Functions::check_permissions($snippet_dir)){
+		if (!empty(PhpSnippets\Functions::$warnings)) {
+			$data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
+			foreach (PhpSnippets\Functions::$warnings as $w => $tmp) {
+				$data['content'] .= sprintf('<li>%s</li>', $w);
 			}
-		}
-		else {
-			$data['msg'] = sprintf('<div class="updated"><p>%s</p></div>', 'Your settings have been updated!');
-			self::$data['snippet_dir'] = $snippet_dir;
-			self::$data['snippet_suffix'] = $snippet_suffix;
-			
-			update_option(self::db_key, self::$data);
-			$data['value'] = $snippet_dir;
-			$data['snippet_suffix'] = $snippet_suffix;
-		
+			$data['content'] .= '<ul></p></div>';	
 		}
 	}
-	$data['content'] .= self::load_view('settings.php', $data);
-
-	print self::load_view('default.php', $data);
-
+	else {
+		$data['msg'] .= sprintf('<div class="updated"><p>%s</p></div>', 'Your settings have been updated!');
+		self::$data['snippet_dir'] = $snippet_dir;
+		self::$data['snippet_suffix'] = $snippet_suffix;
+		
+		update_option(self::db_key, self::$data);
+		$data['value'] = $snippet_dir;
+		$data['snippet_suffix'] = $snippet_suffix;
+	
+	}
 }
+$data['content'] .= self::load_view('settings.php', $data);
+
+print self::load_view('default.php', $data);
+
 /*EOF*/
