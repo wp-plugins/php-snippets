@@ -28,7 +28,8 @@ $data['snippet_suffix'] = self::get_value(self::$data, 'snippet_suffix');
 if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_name']) ) {
   
     if (isset($_POST['activate_license'])) {
-        if (PhpSnippets\License::activate(self::get_value($_POST, 'license_key'))) {
+
+        if (PhpSnippets\License::activate($_POST['license_key'])) {
             $data['msg'] .= sprintf('<div class="updated"><p>%s</p></div>', 'Your license has been successfully activated. Thank you for your support!');
             ob_start();
             PhpSnippets\License::get_fields();

@@ -35,20 +35,16 @@ foreach($snippets as $shortname => $d) {
 	);
 
 }
-
+$php_license = PhpSnippets\License::check();
+if($php_license !==  'valid') {
+	$data['content'] = PhpSnippets\License::get_error_msg();
+}
 /*
 foreach (PhpSnippets\Functions::$existing_shortcodes as $shortname) {
 	$data['other_shortcodes'] = '<strong class="linklike" onclick="javascript:insert_shortcode(\'['.$shortname.']\');">'.$shortname.'</strong><br/>';
 }
 */
+print PhpSnippets\Functions::load_view('thickbox.php', $data);
 
-// Use us a template
-$php_license = PhpSnippets\License::check();
-
-if($php_license->license != 'valid') {
-	PHP_license::get_error_msg();
-} else {
-	print PhpSnippets\Functions::load_view('thickbox.php', $data);
-}
 
 /*EOF*/

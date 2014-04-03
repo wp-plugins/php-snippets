@@ -3,7 +3,7 @@
 	font-size: 23px;
 	line-height: 29px;
 	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', sans-serif;
-	padding-bottom: 50px;
+	padding-bottom: 20px;
 }
 
 
@@ -45,3 +45,21 @@ label.php_snippets_label {
 	font-weight:bold;
 }
 
+.php_snippets_licensing_info {
+	border:1px dotted gray; 
+	padding:10px; 
+	margin: 0px 0px 20px 0px;
+	background: #fff;
+	border: 1px solid #ddd;
+}
+
+.license_status {
+	margin: 10px 0px;
+}
+.php_snippets_valid {
+	border-left: 5px solid #7ad03a;
+}
+
+.php_snippets_invalid {
+	border-left: 5px solid #dd3d36;
+}
