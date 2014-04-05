@@ -127,11 +127,14 @@ class Functions {
 	public static function get_snippets($force_scan=false) {
 		//if ($force_scan) {
 		self::$data = get_option(self::db_key, array());
-
+		$show_builtin_snippets = self::get_value(self::$data, 'show_builtin_snippets', '');
 		//}
 		// Scan built-in directory
 		$dirs = array();
-		$dirs[] = PHP_SNIPPETS_PATH .'/snippets';
+		if($show_builtin_snippets) {
+			$dirs[] = PHP_SNIPPETS_PATH .'/snippets';
+		}
+		
 		
 		$user_dir = self::get_value(self::$data, 'snippet_dir', '');
 		$suffix = self::get_value(self::$data, 'snippet_suffix','.snippet.php');
@@ -139,7 +142,7 @@ class Functions {
 		if (!empty($user_dir)){
 			$dirs[] = $user_dir;
 		}
-
+	
 		foreach($dirs as $dir){
 
 			if (!self::check_permissions($dir)) continue;

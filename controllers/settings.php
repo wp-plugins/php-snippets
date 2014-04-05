@@ -20,6 +20,7 @@ PhpSnippets\License::get_fields();
 $data['licensing_fields'] = ob_get_clean();
 $data['snippet_dir'] = self::get_value(self::$data, 'snippet_dir', ABSPATH.'/wp-content/snippets/');
 $data['snippet_suffix'] = self::get_value(self::$data, 'snippet_suffix');
+$data['show_builtin_snippets'] = self::get_value(self::$data, 'show_builtin_snippets');
 
 //$php_license = PhpSnippets\License::check();
 //PhpSnippets\License::activate_page();
@@ -45,6 +46,7 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
     	// A little cleanup before we handoff to save_definition_filter
     	$snippet_dir = trim(strip_tags(self::get_value($_POST, 'snippet_dir')));
     	$snippet_suffix = self::get_value($_POST, 'snippet_suffix');
+        $show_builtin_snippets = self::get_value($_POST, 'show_builtin_snippets');
     	$snippet_suffix = !empty($snippet_suffix) ? trim(strip_tags($snippet_suffix)) : '.snippet.php';
     
     
@@ -61,14 +63,17 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
     		$data['msg'] .= sprintf('<div class="updated"><p>%s</p></div>', 'Your settings have been updated!');
     		self::$data['snippet_dir'] = $snippet_dir;
     		self::$data['snippet_suffix'] = $snippet_suffix;
+            self::$data['show_builtin_snippets'] = $show_builtin_snippets;
     		
     		update_option(self::db_key, self::$data);
     		$data['value'] = $snippet_dir;
     		$data['snippet_suffix'] = $snippet_suffix;
+            $data['show_builtin_snippets'] = $show_builtin_snippets;
     	
     	}
     }
 }
+
 $data['content'] .= self::load_view('settings.php', $data);
 
 print self::load_view('default.php', $data);
