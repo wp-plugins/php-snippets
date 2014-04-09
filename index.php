@@ -75,7 +75,10 @@ if (empty($php_snippet_errors)) {
     add_filter('mce_buttons', 'PhpSnippets\Functions::tinyplugin_add_button', 0);
     add_action('init','PhpSnippets\Functions::init');
     add_action('widgets_init', 'PhpSnippets\Widget::register_this_widget');
+   
 }
+
+
 
 
 /*EOF*/

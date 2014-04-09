@@ -63,3 +63,9 @@ label.php_snippets_label {
 .php_snippets_invalid {
 	border-left: 5px solid #dd3d36;
 }
+
+.rm_dir {
+	cursor: pointer;
+	border: 1px solid #ddd;
+	padding: 3px 8px;
+}

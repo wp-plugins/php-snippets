@@ -66,16 +66,16 @@ class Functions {
 	 * @return	boolean	true on success (permissions are ok), false on failure (permissions are borked)
 	 */
 	public static function check_permissions($dir) {
-        $dir = self::parse_dirname($dir);
-		if (!file_exists($dir)) {
-			// throw error!
-			self::register_warning(sprintf(__('Directory does not exist! %s', 'php_snippets'), "<code>$dir</code>"));
-			return false;
-		}
-		if (!is_dir($dir)) {
-			self::register_warning(sprintf(__('The selected Snippet directory must be a directory, not a file! %s', 'php_snippets'), "<code>$dir</code>"));
-			return false;		
-		}
+			$dir = self::parse_dirname($dir);
+			if (!file_exists($dir)) {
+				// throw error!
+				self::register_warning(sprintf(__('Directory does not exist! %s', 'php_snippets'), "<code>$dir</code>"));
+				return false;
+			}
+			if (!is_dir($dir)) {
+				self::register_warning(sprintf(__('The selected Snippet directory must be a directory, not a file! %s', 'php_snippets'), "<code>$dir</code>"));
+				return false;		
+			}
 
 		// Assume that permissions are Ok
 		return true;
@@ -130,18 +130,15 @@ class Functions {
 		$show_builtin_snippets = self::get_value(self::$data, 'show_builtin_snippets', '');
 		//}
 		// Scan built-in directory
-		$dirs = array();
+		$dirs = self::get_value(self::$data, 'snippet_dirs', array());
+		
 		if($show_builtin_snippets) {
 			$dirs[] = PHP_SNIPPETS_PATH .'/snippets';
 		}
 		
-		
-		$user_dir = self::get_value(self::$data, 'snippet_dir', '');
 		$suffix = self::get_value(self::$data, 'snippet_suffix','.snippet.php');
-	
-		if (!empty($user_dir)){
-			$dirs[] = $user_dir;
-		}
+		
+
 	
 		foreach($dirs as $dir){
 
@@ -255,8 +252,11 @@ class Functions {
 		
 		if (is_admin()) {		
 			//wp_enqueue_script('media-upload'); // We need the send_to_editor() function.
+			wp_enqueue_script('php_snippets_jquery', PHP_SNIPPETS_URL . '/js/jquery-1.11.0.min.js' );
 			wp_enqueue_script('php_snippets_manager', PHP_SNIPPETS_URL . '/js/manager.js' );
+			wp_enqueue_script('php_snippets_script', PHP_SNIPPETS_URL . '/js/script.js' );
 			wp_register_style('php_snippets_css', PHP_SNIPPETS_URL . '/css/style.css');
+			
 			wp_enqueue_style('php_snippets_css');
 		}
 		

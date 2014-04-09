@@ -1,11 +1,21 @@
+
 <form method="post">
 	<?php wp_nonce_field($data['action_name'], $data['nonce_name']); ?>
 	
 	<?php print $data['licensing_fields']; ?>
-	
+	<?php //print htmlentities($data['snippet_dir']); ?>
 	<label for="snippet_dir" class="php_snippets_label">Snippet Directory</label>
-	<input type="text" name="snippet_dir" id="snippet_dir" size="100" value="<?php print htmlentities($data['snippet_dir']); ?>"/>
+	<div id="dir_wrap">
+		<?php if(!empty($data['snippet_dirs'])) : ?>
+			<?php foreach ($data['snippet_dirs'] as $dir) : ?>
+				<div class="dir_item"><input type="text" name="snippet_dirs[]" class="snippet_dir" size="100" value="<?php print $dir; ?>"/><span class='rm_dir'>x</span></div>
+			<?php endforeach; ?>
+		<?php endif ?>
+	</div>
 	
+
+	<button class="button" id="add_dir">Add Directory</button>
+	<a href="#" id="show_all_snippets" class="button button-primary">Show all Snippets</a>
 
 	<div class="php_snippets_description">
 		<p>This is the absolute path to the directory where you can store your PHP snippets, e.g. <code>/home/html/wp-content/snippets</code> (omit the trailing slash).  Use PHP's <code>getcwd()</code> or the Linux <code>pwd</code> command to get the full path to the directory.  <strong>DO NOT USE A URL!</strong> This MUST be a full path!  You may use the <code>[+ABSPATH+]</code> placeholder to get a calculated path to your site root, otherwise be sure to update this setting if you move your site!</p>
