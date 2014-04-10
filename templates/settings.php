@@ -10,12 +10,14 @@
 			<?php foreach ($data['snippet_dirs'] as $dir) : ?>
 				<div class="dir_item"><input type="text" name="snippet_dirs[]" class="snippet_dir" size="100" value="<?php print $dir; ?>"/><span class='rm_dir'>x</span></div>
 			<?php endforeach; ?>
+		<?php else : ?>
+			<div class="dir_item"><input type="text" name="snippet_dirs[]" class="snippet_dir" size="100" value=""/><span class='rm_dir'>x</span></div>
 		<?php endif ?>
 	</div>
 	
 
-	<button class="button" id="add_dir">Add Directory</button>
-	<a href="#" id="show_all_snippets" class="button button-primary">Show all Snippets</a>
+	<button onclick="add_field_dir();"class="button" id="add_dir">Add Directory</button>
+	
 
 	<div class="php_snippets_description">
 		<p>This is the absolute path to the directory where you can store your PHP snippets, e.g. <code>/home/html/wp-content/snippets</code> (omit the trailing slash).  Use PHP's <code>getcwd()</code> or the Linux <code>pwd</code> command to get the full path to the directory.  <strong>DO NOT USE A URL!</strong> This MUST be a full path!  You may use the <code>[+ABSPATH+]</code> placeholder to get a calculated path to your site root, otherwise be sure to update this setting if you move your site!</p>
@@ -31,7 +33,8 @@
 
 	<input type="hidden" name="show_builtin_snippets" value="0" />
 	<input type="checkbox" id="show_builtin_snippets" name="show_builtin_snippets" value="1" <?php print ($data['show_builtin_snippets'] == 1) ? 'checked' : ''; ?>/>
-	<label for="show_builtin_snippets">Show Built-in Snippets</label>
+	<label for="show_builtin_snippets">Show Built-in Snippets</label><br><br>
+	<a href="#" onclick="settings_snippets();" id="show_all_snippets" class="button">Show all Snippets</a>
 	
 	<br><br>
 	<input type="submit" value="Update Settings" class="button button-primary"/>

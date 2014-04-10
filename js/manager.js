@@ -11,7 +11,6 @@ function show_php_snippets() {
 	        "action" : 'list_snippets',
 	        "list_snippets_nonce" : php_snippets.ajax_nonce
 	    };
-	    
 	
 	jQuery.post(
 	    php_snippets.ajax_url,
@@ -65,3 +64,50 @@ function insert_shortcode(h) {
 
 	tb_remove();
 }
+
+
+/*------------------------------------------------------------------------------
+Add Snippet Directory (Multi dir feature)
+------------------------------------------------------------------------------*/
+function add_field_dir() {
+	jQuery( "#dir_wrap" ).append( "<div class='dir_item'><input type='text' name='snippet_dirs[]' size='100' value=''/><span class='rm_dir'>x<span></div>" );
+	event.preventDefault();
+}
+
+/*------------------------------------------------------------------------------
+Remove Snippet Directory
+------------------------------------------------------------------------------*/
+jQuery(document).on('click','.rm_dir', function(){
+    jQuery(this).parent().remove();
+    event.preventDefault();
+});
+
+/*------------------------------------------------------------------------------
+Show Snippets from phpsnippets setting page
+------------------------------------------------------------------------------*/
+function settings_snippets() {
+	jQuery('body').append('<div id="snippets_list" style="display:none;"></div>');
+        var data = {
+          "action" : 'dir_snippets',
+          "dir_snippets_nonce" : php_snippets.ajax_nonce
+        };
+
+
+        jQuery.post(
+          php_snippets.ajax_url,
+          data,
+          function( response ) {
+            // Write the response to the div
+            console.log(response);
+            jQuery('#snippets_list').html(response);
+
+            var width = jQuery(window).width(), H = jQuery(window).height(), W = ( 720 < width ) ? 720 : width;
+            W = W - 80;
+            H = H - 120;
+            // then thickbox the div
+            tb_show('', '#TB_inline?width=' + W + '&height=' + H + '&inlineId=snippets_list' );     
+          }
+        );
+       event.preventDefault();
+}
+

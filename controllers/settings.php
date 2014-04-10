@@ -23,6 +23,8 @@ $data['snippet_dirs'] = self::get_value(self::$data, 'snippet_dirs', array());
 $data['snippet_suffix'] = self::get_value(self::$data, 'snippet_suffix');
 $data['show_builtin_snippets'] = self::get_value(self::$data, 'show_builtin_snippets');
 
+
+
 //$php_license = PhpSnippets\License::check();
 //PhpSnippets\License::activate_page();
 
@@ -46,46 +48,36 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
     else {   
 
     	// A little cleanup before we handoff to save_definition_filter
-
+        PhpSnippets\Functions::$warnings = array();
     	$snippet_dirs = self::get_value($_POST, 'snippet_dirs',array());
     	$snippet_suffix = self::get_value($_POST, 'snippet_suffix');
         $show_builtin_snippets = self::get_value($_POST, 'show_builtin_snippets');
     	$snippet_suffix = !empty($snippet_suffix) ? trim(strip_tags($snippet_suffix)) : '.snippet.php';
-        
         foreach ($snippet_dirs as $dir) {
 
             if (!PhpSnippets\Functions::check_permissions($dir)){
-                if (!empty(PhpSnippets\Functions::$warnings)) {
+                $warns = PhpSnippets\Functions::$warnings;
+
+               
+                if (!empty($warns)) {
                     $data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
-                    foreach (PhpSnippets\Functions::$warnings as $w => $tmp) {
+                    foreach ($warns as $w => $tmp) {
                         $data['content'] .= sprintf('<li>%s</li>', $w);
                     }
                     $data['content'] .= '<ul></p></div>';   
                 }
-            } else {
-                $checked_dirs[] = $dir;
-            } 
+            }
         }
-/*
-        if (empty($snippet_dirs)) {
-            $data['content'] = 'There must be 1 Valid Directory';;
-        }*/
-                
         $data['msg'] .= sprintf('<div class="updated"><p>%s</p></div>', 'Your settings have been updated!');
          
-        self::$data['snippet_dirs'] = $checked_dirs;
+        self::$data['snippet_dirs'] = $snippet_dirs;
         self::$data['snippet_suffix'] = $snippet_suffix;
         self::$data['show_builtin_snippets'] = $show_builtin_snippets;
         
         update_option(self::db_key, self::$data);
-        $data['snippet_dirs'] = $checked_dirs;
+        $data['snippet_dirs'] = $snippet_dirs;
         $data['snippet_suffix'] = $snippet_suffix;
         $data['show_builtin_snippets'] = $show_builtin_snippets;
-     
-        
-            
-
-        
     }
 }
 

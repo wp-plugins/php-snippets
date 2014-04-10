@@ -54,6 +54,7 @@ class Functions {
 	public static $snippets = array();
 
 
+
 	public static function add_menu() {
 		add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 'php-snippets', 'PhpSnippets\Functions::settings');
 	}
@@ -115,7 +116,6 @@ class Functions {
 	 * by the PHP_Snippet constructor when adding shortcodes and by the Ajax controller
 	 * list_snippets.php.
 	 *
-	 * Optionally forces a re-scan of the directory, otherwise reads from cache.
 	 *
 	 * Populates 
 	 *
@@ -183,6 +183,8 @@ class Functions {
 		die();*/
 		return self::$snippets;
 	}
+
+	
 	
 	//------------------------------------------------------------------------------
 	/**
@@ -197,6 +199,7 @@ class Functions {
 		$info['path'] 		= $path;
 		$info['desc'] 		= '';
 		$info['shortcode'] 	= '';
+		$info['dir']	= dirname($path);
 		
 		if (file_exists($path)) {
 			$contents = file_get_contents($path);
@@ -252,11 +255,9 @@ class Functions {
 		
 		if (is_admin()) {		
 			//wp_enqueue_script('media-upload'); // We need the send_to_editor() function.
-			wp_enqueue_script('php_snippets_jquery', PHP_SNIPPETS_URL . '/js/jquery-1.11.0.min.js' );
-			wp_enqueue_script('php_snippets_manager', PHP_SNIPPETS_URL . '/js/manager.js' );
-			wp_enqueue_script('php_snippets_script', PHP_SNIPPETS_URL . '/js/script.js' );
+			wp_enqueue_script('jquery');
+			wp_enqueue_script('php_snippets_manager', PHP_SNIPPETS_URL . '/js/manager.js','','4.0.0' );
 			wp_register_style('php_snippets_css', PHP_SNIPPETS_URL . '/css/style.css');
-			
 			wp_enqueue_style('php_snippets_css');
 		}
 		
