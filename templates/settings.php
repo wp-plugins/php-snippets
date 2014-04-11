@@ -1,4 +1,6 @@
-
+<?php  if(!empty($data['warnings'])) : ?>
+	<div id="php-snippets-errors" class="error"><p>Some of the directories you defined do not exist!</p></div>
+<?php endif; ?>
 <form method="post">
 	<?php wp_nonce_field($data['action_name'], $data['nonce_name']); ?>
 	
@@ -8,7 +10,11 @@
 	<div id="dir_wrap">
 		<?php if(!empty($data['snippet_dirs'])) : ?>
 			<?php foreach ($data['snippet_dirs'] as $dir) : ?>
-				<div class="dir_item"><input type="text" name="snippet_dirs[]" class="snippet_dir" size="100" value="<?php print $dir; ?>"/><span class='rm_dir'>x</span></div>
+				<div class="dir_item <?php print isset($data['warnings'][$dir]) ? 'warning_field' : ''; ?>">
+					<input type="text" name="snippet_dirs[]" class="snippet_dir" size="100" value="<?php print $dir; ?>"/><span class='rm_dir'>x</span>
+					<?php print isset($data['warnings'][$dir]) ? '<span class="warn_info" >This Directory does not Exist.</span>' : ''; ?>
+				</div>
+				
 			<?php endforeach; ?>
 		<?php else : ?>
 			<div class="dir_item"><input type="text" name="snippet_dirs[]" class="snippet_dir" size="100" value=""/><span class='rm_dir'>x</span></div>

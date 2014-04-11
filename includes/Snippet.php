@@ -48,7 +48,8 @@ class Snippet {
 	 */
 	public function __construct() {
 		// Register the shortcodes
-		$this->snippets = (array) Functions::get_snippets(); //array(); // get snippets
+		//$this->snippets = (array) Functions::get_snippets(); //array(); // get snippets
+		$this->snippets = array();
 		foreach ($this->snippets as $name => $data) {
 			if (!in_array($name, Functions::$existing_shortcodes)) {
 				

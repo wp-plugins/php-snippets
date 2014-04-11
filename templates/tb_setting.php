@@ -14,11 +14,13 @@
 	.snippet_list li {
 		margin-left: 20px;
 	}
-	.snippet_list li.snippet_dir {
+	.snippet_dir {
 		margin-left: 0px;
 		font-size: 13px;
 		background: #ddd;
 		padding: 5px 3px;
+		font-weight: bold;
+		margin-bottom:5px; 
 	}
 </style>
 <div>

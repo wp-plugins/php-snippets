@@ -27,10 +27,6 @@ class Functions {
 	 */
 	public static $Snippet;
 
-	/**
-	 * Stores Plugin settings and data.
-	 */
-	public static $data;
 	
 	/**
 	 * The key in wp_postmeta
@@ -72,10 +68,13 @@ class Functions {
 	 * @return	boolean	true on success (permissions are ok), false on failure (permissions are borked)
 	 */
 	public static function check_permissions($dir) {
+			if(trim($dir) == '') {
+				return;
+			}
 			$dir = self::parse_dirname($dir);
 			if (!file_exists($dir)) {
 				// throw error!
-				self::register_warning(sprintf(__('Directory does not exist! %s', 'php_snippets'), "<code>$dir</code>"));
+				self::register_warning($dir);
 				return false;
 			}
 			if (!is_dir($dir)) {
@@ -100,100 +99,14 @@ class Functions {
 	 	);
 	}
 	
-
-	//------------------------------------------------------------------------------
 	/**
-	 * This is what populates our "radar" -- finds all available Snippets.  Used 
-	 * by the PHP_Snippet constructor when adding shortcodes and by the Ajax controller
-	 * list_snippets.php.
-	 *
-	 *
-	 * Populates 
-	 *
-	 * @param	boolean	$force_scan if true, the directories will be re-scanned, otherwise, 
-	 *					cached data is used.
-	 * @return	array. shortname => Info
-	 *			On errors, an empty array is returned and warnings are registered.
+	 * get snippets on the specified directory
+	 * @param string $dir /full/path/to/dir
+	 * @param string $ext file extension to match.
+	 * @return array simple array containing fullpaths to files
 	 */
-	public static function get_snippets($force_scan=false) {
-		//if ($force_scan) {
-		self::$data = get_option(self::db_key, array());
-		$show_builtin_snippets = self::get_value(self::$data, 'show_builtin_snippets', '');
-		//}
-		// Scan built-in directory
-		$dirs = self::get_value(self::$data, 'snippet_dirs', array());
-		
-		if($show_builtin_snippets) {
-			$dirs[] = PHP_SNIPPETS_PATH .'/snippets';
-		}
-		
-		$suffix = self::get_value(self::$data, 'snippet_suffix','.snippet.php');
-		
-
-	
-		foreach($dirs as $dir){
-
-			if (!self::check_permissions($dir)) continue;
-			$dir = self::parse_dirname($dir);
-			$rawfiles = @scandir($dir);
-			
-			foreach ($rawfiles as $f) {
-
-				// Check immediate sub-dirs
-				if (is_dir($dir.'/'.$f)) { 
-					$raw_subfiles = scandir($dir.'/'.$f);
-					
-					
-					foreach ($raw_subfiles as $subfile) {
-
-						if ( !preg_match('/^\./', $subfile) && strpos($subfile, $suffix) ) {
-							$shortname = basename($subfile);
-							$shortname = str_replace($suffix, '', $shortname);
-							$path = $dir.'/'.$f.'/'.$subfile; // store the path to snippet
-							self::$snippets[$shortname] = self::get_snippet_info($path);
-						}				
-					}
-				}
-				// Or check files inside the main snippet directory
-				//else {
-					if ( !preg_match('/^\./', $f) && strpos($f, $suffix) ) {
-
-						$shortname = basename($f);
-						$shortname = str_replace($suffix, '', $shortname);
-						$path = $dir.'/'.$f; // store the path to snippet
-
-						self::$snippets[$shortname] = self::get_snippet_info($path);
-					}			
-				//}
-			}
-
-		}
-		//die(print_r(self::$snippets,true));
-		/*echo '<pre>';
-		print_r(self::$snippets);
-		die();*/
-		return self::$snippets;
-	}
-
-	//------------------------------------------------------------------------------
-	/**
-	 * This is what populates our "radar" -- finds all available Snippets.  Used 
-	 * by the PHP_Snippet constructor when adding shortcodes and by the Ajax controller
-	 * list_snippets.php.
-	 *
-	 *
-	 * Populates 
-	 * @return	array. shortname => Info
-	 *			On errors, an empty array is returned and warnings are registered.
-	 */
-	public static function get_snippets2($dir='') {
-
+	public static function get_snippets($dir,$ext) {
 		$snippets = array();
-		self::$data = get_option(self::db_key, array());		
-		$suffix = self::get_value(self::$data, 'snippet_suffix','.snippet.php');
-		
-
-		$dir = self::parse_dirname($dir);
 		$rawfiles = @scandir($dir); 
 		unset($rawfiles[0]);
 		unset($rawfiles[1]);
@@ -201,52 +114,31 @@ class Functions {
 		if(!empty($rawfiles)) {
 			foreach ($rawfiles as $f) {
 				if(!is_dir($dir.'/'.$f)) {
-					if ( !preg_match('/^\./', $f) && strpos($f, $suffix) ) {
-						$shortname = basename($f);
-						$shortname = str_replace($suffix, '', $shortname);
-						$path = $dir.'/'.$f; // store the path to snippet
-
-						$snippets[$shortname] = self::get_snippet_info($path);
+					if ( !preg_match('/^\./', $f) && strpos($f, $ext) ) {
+						$snippets[] = $dir.'/'.$f;
 					}			
 				}
 				
 			}
 		}
-			
 		return $snippets;
 	}
 
 	/**
-	 * Get all directories
-	 * @return array of directories
+	 * Get a list of all directories where the user said to look for snippets.
+	 * We flag each directory as to whether or not it exists.
+	 * @param array $dirs data from database
+	 * @param boolean $include_built_in if true, include the built-in snippets dir in the list
+	 * @return array associative array of full-path-to-dir => true/false.  True if the dir exits. False if it does not
 	 */
-	public static function get_snippet_dirs() {
-		self::$data = get_option(self::db_key, array());
-		$dirs = self::$data['snippet_dirs'];
-		$show_builtin_snippets = self::get_value(self::$data, 'show_builtin_snippets', '');
-
-		
-		if($show_builtin_snippets) {
+	public static function get_dirs($dirs,$include_built_in) {
+		if($include_built_in) {
 			$dirs[] = PHP_SNIPPETS_PATH .'/snippets';
 		}
-
-		foreach($dirs as $dir){
-
-			if (!self::check_permissions($dir)) continue;
-			$dir = self::parse_dirname($dir);
-		
-			$rawfiles = @scandir($dir); 
-			unset($rawfiles[0]);
-			unset($rawfiles[1]);
-
-			self::$directories[] = $dir;
-			foreach ($rawfiles as $f) {
-				// Check immediate sub-dirs
-				if (is_dir($dir.'/'.$f)) { 
-					self::$directories[] = $dir .'/'.$f;
-				}
+		if(!empty($dirs)) {
+			foreach($dirs as $dir){
+				self::$directories[$dir] = self::check_permissions($dir) ;
 			}
-
 		}
 
 		return self::$directories;

@@ -18,11 +18,12 @@ $data['nonce_name']  = 'php_snippets_settings_nonce';
 ob_start();
 PhpSnippets\License::get_fields();
 
+$ps_data = get_option(self::db_key, array());
 $data['licensing_fields'] = ob_get_clean();
-$data['snippet_dirs'] = self::get_value(self::$data, 'snippet_dirs', array());
-$data['snippet_suffix'] = self::get_value(self::$data, 'snippet_suffix');
-$data['show_builtin_snippets'] = self::get_value(self::$data, 'show_builtin_snippets');
-
+$data['snippet_dirs'] = self::get_value($ps_data, 'snippet_dirs', array());
+$data['warnings'] = self::get_value($ps_data, 'warnings', array());
+$data['snippet_suffix'] = self::get_value($ps_data, 'snippet_suffix');
+$data['show_builtin_snippets'] = self::get_value($ps_data, 'show_builtin_snippets');
 
 
 //$php_license = PhpSnippets\License::check();
@@ -32,7 +33,6 @@ $data['show_builtin_snippets'] = self::get_value(self::$data, 'show_builtin_snip
 if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_name']) ) {
   
     if (isset($_POST['activate_license'])) {
-
         if (PhpSnippets\License::activate($_POST['license_key'])) {
             $data['msg'] .= sprintf('<div class="updated"><p>%s</p></div>', 'Your license has been successfully activated. Thank you for your support!');
             ob_start();
@@ -41,6 +41,9 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
         }
         else {
             $data['msg'] .= sprintf('<div class="error"><p>%s</p></div>', 'There was a problem activating your license. Sorry for the inconvenience.');
+            ob_start();
+            PhpSnippets\License::get_fields();
+            $data['licensing_fields'] = ob_get_clean(); 
         }
         // options-general.php?page=php-snippets
         //print '<script type="text/javascript">window.location.replace("'.get_admin_url(false, 'options-general.php?page=php-snippets').'");</script>';
@@ -48,7 +51,7 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
     else {   
 
     	// A little cleanup before we handoff to save_definition_filter
-        PhpSnippets\Functions::$warnings = array();
+
     	$snippet_dirs = self::get_value($_POST, 'snippet_dirs',array());
     	$snippet_suffix = self::get_value($_POST, 'snippet_suffix');
         $show_builtin_snippets = self::get_value($_POST, 'show_builtin_snippets');
@@ -61,26 +64,19 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
 
             if (!PhpSnippets\Functions::check_permissions($dir)){
                 $warns = PhpSnippets\Functions::$warnings;
-
-               
-                if (!empty($warns)) {
-                    $data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
-                    foreach ($warns as $w => $tmp) {
-                        $data['content'] .= sprintf('<li>%s</li>', $w);
-                    }
-                    $data['content'] .= '<ul></p></div>';   
-                }
             }
         }
 
         $data['msg'] .= sprintf('<div class="updated"><p>%s</p></div>', 'Your settings have been updated!');
          
-        self::$data['snippet_dirs'] = $snippet_dirs;
-        self::$data['snippet_suffix'] = $snippet_suffix;
-        self::$data['show_builtin_snippets'] = $show_builtin_snippets;
+        $ps_data['snippet_dirs'] = $snippet_dirs;
+        $ps_data['snippet_suffix'] = $snippet_suffix;
+        $ps_data['show_builtin_snippets'] = $show_builtin_snippets;
+        $ps_data['warnings'] = $warns;
         
-        update_option(self::db_key, self::$data);
+        update_option(self::db_key, $ps_data);
         $data['snippet_dirs'] = $snippet_dirs;
+        $data['warnings'] = $warns;
         $data['snippet_suffix'] = $snippet_suffix;
         $data['show_builtin_snippets'] = $show_builtin_snippets;
     }

@@ -38,7 +38,8 @@ class Widget extends \WP_Widget {
 	 */
 	public function form($instance) {
 		
-		$snippets = Functions::get_snippets(true);
+		//$snippets = Functions::get_snippets(true);
+		$snippets = array();
 
 //		print_r($snippets); return;
 		$snippet_options = '<option></option>';

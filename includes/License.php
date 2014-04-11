@@ -107,6 +107,7 @@ class License {
 	public static function activate($license) {
         $license = trim($license);
 
+
         update_option(self::$key_option_name, $license);
         
 		// data to send in our API request
@@ -131,7 +132,9 @@ class License {
 
 		if (empty($license_data) || !is_object($license_data)) return false;
 		// $license_data->license will be either "valid" or "invalid".  Should be named "status" :(
+
 		update_option(self::$status_option_name, $license_data->license);
+
 		if($license_data->success) {
 			return true;
 		}

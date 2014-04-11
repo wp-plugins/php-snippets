@@ -10,43 +10,35 @@ if (!current_user_can('edit_posts')) die('You do not have permission to do that.
 $data = array();
 $data['pagetitle'] = __('Snippets and Directory List', 'php_snippets');
 $data['content'] = '';
-
-
-$snippets = PhpSnippets\Functions::get_snippets(); 
+$dirs = PhpSnippets\Functions::get_snippet_dirs(); 
+$snippets = array();
 
 if (!empty(PhpSnippets\Functions::$warnings)) {
-	$data['content'] = '<div id="php-snippets-errors" class="error"><p><ul>';
-	foreach (PhpSnippets\Functions::$warnings as $w => $tmp) {
-		$data['content'] .= sprintf('<li>%s</li>', $w);
-	}
-	$data['content'] .= '<ul></p></div>';	
+	$data['content'] .= '<div id="php-snippets-errors" class="error"><p>Some of the directories you defined do not exist!</p></div><br>';	
 }
-$dir ='';
-foreach($snippets as $shortname => $s) {
-	
-	if (empty($d['shortcode'])) {
-		$s['shortcode'] = "[$shortname]";
-	}
-	if($s['dir'] == $dir) {
-		$data['content'] .= sprintf('<li>
-								<strong class="linklike">%s</strong> 
-								: <span class="php_snippets_desc">%s</span></li>'
-								, $shortname
-								, $s['desc']
-							);
-	} else {
-		$dir = $s['dir'];
-		$data['content'] .= "<li class='snippet_dir'><strong>Directory: </strong>{$dir}</li>";
-		$data['content'] .= sprintf('<li>
-								<strong class="linklike">%s</strong> 
-								: <span class="php_snippets_desc">%s</span></li>'
-								, $shortname
-								, $s['desc']
-							);
+
+
+foreach ($dirs as $dir) {
+	$data['content'] .= "<div class='snippet_dir'>$dir</div>";
+	$snippets = PhpSnippets\Functions::get_snippets2($dir); 
+
+	if(!empty($snippets)) {
+		foreach ($snippets as $shortname => $s) {
+			if (empty($d['shortcode'])) {
+				$s['shortcode'] = "[$shortname]";
+			}
+			$data['content'] .= sprintf('<li>
+				<strong class="linklike">%s</strong> 
+				: <span class="php_snippets_desc">%s</span></li>'
+				, $shortname
+				, $s['desc']
+			);
+		}
 	}
 	
 
 }
+
 $php_license = PhpSnippets\License::check();
 if($php_license !==  'valid') {
 	$data['content'] = PhpSnippets\License::get_error_msg();

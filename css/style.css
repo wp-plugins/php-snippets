@@ -69,3 +69,23 @@ label.php_snippets_label {
 	border: 1px solid #ddd;
 	padding: 3px 8px;
 }
+
+.rm_dir {
+	cursor: pointer;
+	border: 1px solid #ddd;
+	padding: 3px 8px;
+	background: #f1f1f1;
+}
+
+.warning_field {
+	border: 1px solid #ae0004;
+	padding: 2px 2px 0px 2px;
+	background: #fdbdbd;
+	font-size: 11px;
+	margin: 5px 0px;
+}
+
+.warning_field .warn_info {
+	margin-left: 5px;
+	color: #ae0004;
+}
