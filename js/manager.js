@@ -69,9 +69,9 @@ function insert_shortcode(h) {
 /*------------------------------------------------------------------------------
 Add Snippet Directory (Multi dir feature)
 ------------------------------------------------------------------------------*/
-function add_field_dir() {
+function add_field_dir(e) {
 	jQuery( "#dir_wrap" ).append( "<div class='dir_item'><input type='text' name='snippet_dirs[]' size='100' value=''/><span class='rm_dir'>x<span></div>" );
-	event.preventDefault();
+	e.preventDefault();
 }
 
 /*------------------------------------------------------------------------------
@@ -84,8 +84,9 @@ jQuery(document).on('click','.rm_dir', function(){
 
 /*------------------------------------------------------------------------------
 Show Snippets from phpsnippets setting page
+NOTE: thickbox script and css must be loaded on the plugin or else modal will fail on firefox
 ------------------------------------------------------------------------------*/
-function settings_snippets() {
+function settings_snippets(e) {
 	jQuery('body').append('<div id="snippets_list" style="display:none;"></div>');
         var data = {
           "action" : 'dir_snippets',
@@ -108,6 +109,6 @@ function settings_snippets() {
             tb_show('', '#TB_inline?width=' + W + '&height=' + H + '&inlineId=snippets_list' );     
           }
         );
-       event.preventDefault();
+       e.preventDefault();
 }
 

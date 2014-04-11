@@ -23,6 +23,19 @@ $data['snippet_dirs'] = self::get_value(self::$data, 'snippet_dirs', array());
 $data['snippet_suffix'] = self::get_value(self::$data, 'snippet_suffix');
 $data['show_builtin_snippets'] = self::get_value(self::$data, 'show_builtin_snippets');
 
+//Start for Testing
+$dirs = PhpSnippets\Functions::get_snippet_dirs();
+foreach ($dirs as $dir) {
+    $dir_snippets = PhpSnippets\Functions::get_snippets2($dir);
+    if(!empty($dir_snippets)){
+         $snippets[] =$dir_snippets;
+    }
+}
+
+echo '<pre>';
+print_r($snippets);
+die();
+//End For testing
 
 
 //$php_license = PhpSnippets\License::check();
@@ -53,7 +66,11 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
     	$snippet_suffix = self::get_value($_POST, 'snippet_suffix');
         $show_builtin_snippets = self::get_value($_POST, 'show_builtin_snippets');
     	$snippet_suffix = !empty($snippet_suffix) ? trim(strip_tags($snippet_suffix)) : '.snippet.php';
-        foreach ($snippet_dirs as $dir) {
+        foreach ($snippet_dirs as $i => $dir) {
+            // remove empty val
+            if(trim($dir) == '') {
+                unset($snippet_dirs[$i]);
+            }
 
             if (!PhpSnippets\Functions::check_permissions($dir)){
                 $warns = PhpSnippets\Functions::$warnings;
@@ -68,6 +85,7 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
                 }
             }
         }
+
         $data['msg'] .= sprintf('<div class="updated"><p>%s</p></div>', 'Your settings have been updated!');
          
         self::$data['snippet_dirs'] = $snippet_dirs;

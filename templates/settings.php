@@ -16,7 +16,7 @@
 	</div>
 	
 
-	<button onclick="add_field_dir();"class="button" id="add_dir">Add Directory</button>
+	<button onclick="add_field_dir(event);"class="button" id="add_dir">Add Directory</button>
 	
 
 	<div class="php_snippets_description">
@@ -34,7 +34,7 @@
 	<input type="hidden" name="show_builtin_snippets" value="0" />
 	<input type="checkbox" id="show_builtin_snippets" name="show_builtin_snippets" value="1" <?php print ($data['show_builtin_snippets'] == 1) ? 'checked' : ''; ?>/>
 	<label for="show_builtin_snippets">Show Built-in Snippets</label><br><br>
-	<a href="#" onclick="settings_snippets();" id="show_all_snippets" class="button">Show all Snippets</a>
+	<a href="#" onclick="settings_snippets(event);" id="show_all_snippets" class="button">Show all Snippets</a>
 	
 	<br><br>
 	<input type="submit" value="Update Settings" class="button button-primary"/>

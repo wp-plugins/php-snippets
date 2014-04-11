@@ -32,9 +32,9 @@ class License {
 
             <label for="snippet_dir" class="php_snippets_label"><?php _e('License Key'); ?></label>
         	<input type="text" name="license_key" id="license_key" size="30" value="<?php esc_attr_e($license); ?>"/>
-        	 <?php if($status == 'invalid') : ?>
+
         	 <input type="submit" class="button-secondary" name="activate_license" value="<?php _e('Activate License'); ?>"/>
-            <?php endif; ?>
+
                 <?php if($status == 'valid') : ?>
                     <label for="license_status" class="php_snippets_label license_status">
                         <?php _e('License Status'); ?>:

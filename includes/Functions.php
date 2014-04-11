@@ -53,6 +53,11 @@ class Functions {
 	 */
 	public static $snippets = array();
 
+	/**
+	 * All directories
+	 */
+	public static $directories = array();
+
 
 
 	public static function add_menu() {
@@ -95,20 +100,6 @@ class Functions {
 	 	);
 	}
 	
-	//------------------------------------------------------------------------------
-	/**
-	 * Given a tag, e.g. 'my-code', this will return the full filename for that tag.
-	 * If the tag isn't registered, it forces a re-scan of the directory.
-	 *
-	 * @param	string	$tag basename of the file/shortcode name
-	 * @param	string	full path to file OR a false on errors.
-	 */
-	public static function get_filename_from_tag($tag) {
-		if (!isset(self::$data['snippets'][$tag])) {
-			self::get_snippets(true); // re-scan
-		}
-	}
-
 
 	//------------------------------------------------------------------------------
 	/**
@@ -184,6 +175,82 @@ class Functions {
 		return self::$snippets;
 	}
 
+	//------------------------------------------------------------------------------
+	/**
+	 * This is what populates our "radar" -- finds all available Snippets.  Used 
+	 * by the PHP_Snippet constructor when adding shortcodes and by the Ajax controller
+	 * list_snippets.php.
+	 *
+	 *
+	 * Populates 
+	 * @return	array. shortname => Info
+	 *			On errors, an empty array is returned and warnings are registered.
+	 */
+	public static function get_snippets2($dir='') {
+
+		$snippets = array();
+		self::$data = get_option(self::db_key, array());		
+		$suffix = self::get_value(self::$data, 'snippet_suffix','.snippet.php');
+		
+
+		$dir = self::parse_dirname($dir);
+		$rawfiles = @scandir($dir); 
+		unset($rawfiles[0]);
+		unset($rawfiles[1]);
+
+		if(!empty($rawfiles)) {
+			foreach ($rawfiles as $f) {
+				if(!is_dir($dir.'/'.$f)) {
+					if ( !preg_match('/^\./', $f) && strpos($f, $suffix) ) {
+						$shortname = basename($f);
+						$shortname = str_replace($suffix, '', $shortname);
+						$path = $dir.'/'.$f; // store the path to snippet
+
+						$snippets[$shortname] = self::get_snippet_info($path);
+					}			
+				}
+				
+			}
+		}
+			
+		return $snippets;
+	}
+
+	/**
+	 * Get all directories
+	 * @return array of directories
+	 */
+	public static function get_snippet_dirs() {
+		self::$data = get_option(self::db_key, array());
+		$dirs = self::$data['snippet_dirs'];
+		$show_builtin_snippets = self::get_value(self::$data, 'show_builtin_snippets', '');
+
+		
+		if($show_builtin_snippets) {
+			$dirs[] = PHP_SNIPPETS_PATH .'/snippets';
+		}
+
+		foreach($dirs as $dir){
+
+			if (!self::check_permissions($dir)) continue;
+			$dir = self::parse_dirname($dir);
+		
+			$rawfiles = @scandir($dir); 
+			unset($rawfiles[0]);
+			unset($rawfiles[1]);
+
+			self::$directories[] = $dir;
+			foreach ($rawfiles as $f) {
+				// Check immediate sub-dirs
+				if (is_dir($dir.'/'.$f)) { 
+					self::$directories[] = $dir .'/'.$f;
+				}
+			}
+
+		}
+
+		return self::$directories;
+	}
 	
 	
 	//------------------------------------------------------------------------------
@@ -256,6 +323,10 @@ class Functions {
 		if (is_admin()) {		
 			//wp_enqueue_script('media-upload'); // We need the send_to_editor() function.
 			wp_enqueue_script('jquery');
+			// thickbox must be loaded for firefox
+			wp_enqueue_style('thickbox');
+ 			wp_enqueue_script('thickbox');
+
 			wp_enqueue_script('php_snippets_manager', PHP_SNIPPETS_URL . '/js/manager.js','','4.0.0' );
 			wp_register_style('php_snippets_css', PHP_SNIPPETS_URL . '/css/style.css');
 			wp_enqueue_style('php_snippets_css');
