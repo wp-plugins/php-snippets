@@ -12,7 +12,7 @@ Author URI: http://craftsmancoding.com/
 //------------------------------------------------------------------------------
 //! Tests
 //------------------------------------------------------------------------------
-$required_php_version = '5.2.6';
+$required_php_version = '5.3.0';
 $php_snippet_errors = array();
 
 if ( version_compare( phpversion(), $required_php_version, '<') ) {

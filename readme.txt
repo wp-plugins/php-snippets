@@ -80,6 +80,7 @@ Check to make sure the bug is actually in the plugin and not in one of your Snip
 
 = 1.0 =
 
+* PHP 5.3.0 is now required.
 * Configurable suffix, so now your snippets need not use the '.snippet.php' extension.
 * Pay-what-you-like licensing added. 
 
@@ -102,6 +103,10 @@ Worked out some bugs, cleaned this thing up for the prom.
 
 
 == Upgrade Notice ==
+
+= 1.0 =
+
+This is a big update: it includes support for fully customizable paths and file-extensions, improved error checking, and many other improvements.  To run this version, you must get get a license key.  You can pay what you want for the license key, including free, so don't miss out on the upgrades!  This version requires PHP version 5.3.0 or greater.
 
 = 0.8 =
 

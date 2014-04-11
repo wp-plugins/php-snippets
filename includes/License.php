@@ -75,19 +75,6 @@ class License {
 		register_setting('php_license', self::$key_option_name, 'PhpSnippets\License::sanitize');
 	}
 
-	
-	/**
-	 * menu
-	 * Add Plugin License Menu
-	 * This is a prepared function to add Custom Menu for the plugin
-	 * Usage: optional
-	 * They can add a custom menu as a sub page for Activate License
-	 */
-/*
-	public static function menu() {
-		add_plugins_page( 'Activate '.self::$plugin.' License', 'Activate ' .self::$plugin. ' License', 'administrator', 'activate-' .strtolower(str_replace(' ', '_', self::$plugin)). '-license', array('PHP_License','activate_page') );
-	}
-*/
 
 	/**
 	 * Handles 
@@ -131,7 +118,6 @@ class License {
 		
 
 		if (empty($license_data) || !is_object($license_data)) return false;
-		// $license_data->license will be either "valid" or "invalid".  Should be named "status" :(
 
 		update_option(self::$status_option_name, $license_data->license);
 
