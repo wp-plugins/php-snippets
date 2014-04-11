@@ -23,19 +23,6 @@ $data['snippet_dirs'] = self::get_value(self::$data, 'snippet_dirs', array());
 $data['snippet_suffix'] = self::get_value(self::$data, 'snippet_suffix');
 $data['show_builtin_snippets'] = self::get_value(self::$data, 'show_builtin_snippets');
 
-//Start for Testing
-$dirs = PhpSnippets\Functions::get_snippet_dirs();
-foreach ($dirs as $dir) {
-    $dir_snippets = PhpSnippets\Functions::get_snippets2($dir);
-    if(!empty($dir_snippets)){
-         $snippets[] =$dir_snippets;
-    }
-}
-
-echo '<pre>';
-print_r($snippets);
-die();
-//End For testing
 
 
 //$php_license = PhpSnippets\License::check();
