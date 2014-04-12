@@ -37,7 +37,6 @@ find where that JS is queued up, so I just copied this one function.
 ------------------------------------------------------------------------------*/
 function insert_shortcode(h) {
 	var ed;
-
 	if ( typeof tinyMCE != 'undefined' && ( ed = tinyMCE.activeEditor ) && !ed.isHidden() ) {
 		// restore caret position on IE
 		if ( tinymce.isIE && ed.windowManager.insertimagebookmark )
