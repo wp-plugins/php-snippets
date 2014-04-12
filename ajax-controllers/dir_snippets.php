@@ -10,18 +10,37 @@ if (!current_user_can('edit_posts')) die('You do not have permission to do that.
 $data = array();
 $data['pagetitle'] = __('Snippets and Directory List', 'php_snippets');
 $data['content'] = '';
-$dirs = PhpSnippets\Functions::get_snippet_dirs(); 
-$snippets = array();
+
+
+$ps_data = get_option(PhpSnippets\Functions::db_key, array());
+$snippet_dirs = PhpSnippets\Functions::get_value($ps_data, 'snippet_dirs', array());
+$show_builtin_snippets = PhpSnippets\Functions::get_value($ps_data, 'show_builtin_snippets', 0);
+$ext = PhpSnippets\Functions::get_value($ps_data, 'snippet_suffix');
+$dirs = PhpSnippets\Functions::get_dirs($snippet_dirs,$show_builtin_snippets);
 
 if (!empty(PhpSnippets\Functions::$warnings)) {
 	$data['content'] .= '<div id="php-snippets-errors" class="error"><p>Some of the directories you defined do not exist!</p></div><br>';	
 }
 
-
-foreach ($dirs as $dir) {
+foreach ($dirs as $dir => $exist) {
+	if($exist) {
+		$snippets = PhpSnippets\Functions::get_snippets($dir,$ext); 
+	}
+}
+echo '<pre>';
+print_r($snippets);
+die();
+foreach ($snippets as $snippet) {
+	echo '<pre>';
+	print_r($snippet);
+	die();
+	$info = PhpSnippets\Functions::get_snippet_info($snippet);
+	echo '<pre>';
+	print_r($info);
+	die();
+}
+/*
 	$data['content'] .= "<div class='snippet_dir'>$dir</div>";
-	$snippets = PhpSnippets\Functions::get_snippets2($dir); 
-
 	if(!empty($snippets)) {
 		foreach ($snippets as $shortname => $s) {
 			if (empty($d['shortcode'])) {
@@ -34,10 +53,7 @@ foreach ($dirs as $dir) {
 				, $s['desc']
 			);
 		}
-	}
-	
-
-}
+	}*/
 
 $php_license = PhpSnippets\License::check();
 if($php_license !==  'valid') {
