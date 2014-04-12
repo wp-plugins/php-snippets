@@ -85,9 +85,11 @@ add_action('init',function(){
     
     // Set any placeholders we want to support in directory names
     Phpsnippets\Base::set_placeholder('ABSPATH', ABSPATH);
-    
+
     // Get all snippets in all dirs
     $dirs = Phpsnippets\Base::get_dirs($defined_dirs,$include_built_in);
+    PhpSnippets\Widget::setDirs($dirs);
+    PhpSnippets\Widget::setExt($ext);
     // Loop thru each dir
     foreach ($dirs as $d => $d_exists) {
         $snippets = (array) Phpsnippets\Base::get_snippets($d,$ext);

@@ -54,7 +54,9 @@ class unitTest extends PHPUnit_Framework_TestCase {
      *
      */
     public function testBadSyntaxRecognition() {
-    	$result = Phpsnippets\Base::has_bad_syntax(dirname(__FILE__).'/dir2/badsyntax.php');
+        // Keep bad syntax named as ".off" so it won't be executed by accident.
+        // This avoids the SVN pre-commit hook problem -- it won't let you commit bad code.
+    	$result = Phpsnippets\Base::has_bad_syntax(dirname(__FILE__).'/dir2/badsyntax.php.off');
     	$this->assertTrue($result !== false, 'The badsyntax.php snippet should have been recognized as having bad syntax.');
     	$result = Phpsnippets\Base::has_bad_syntax(dirname(__FILE__).'/dir2/goodsyntax.php');
     	$this->assertTrue($result === false, 'The goodsyntax.php snippet should have been recognized as having good syntax.');

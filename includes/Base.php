@@ -48,7 +48,7 @@ class Base {
      * @return void
      */
     public static function add_shortcode($fullpath,$ext) {
-        $tag = self::get_tag($fullpath,$ext);
+        $tag = self::get_shortname($fullpath,$ext);
         Snippet::map($tag,$fullpath);
 
 		// success
@@ -273,7 +273,7 @@ class Base {
      * @param string full path to file
      * @param string extension
      */
-    public static function get_tag($file,$ext) {
+    public static function get_shortname($file,$ext) {
         $file = basename($file);
         $file = preg_replace('/'.preg_quote($ext).'$/i','',$file);
         return $file;

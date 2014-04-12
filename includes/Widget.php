@@ -11,7 +11,8 @@ class Widget extends \WP_Widget {
 	public $control_options = array(
 		'title' => 'Posts'
 	);
-	
+	public static $dirs = array();
+	public static $ext;
 	public function __construct() {
 		$this->name = __('PHP Snippet', 'php_snippets');
 		$this->description = __('Choose a PHP Snippet that will generate the content for this widget.', 'php_snippets');
@@ -23,19 +24,33 @@ class Widget extends \WP_Widget {
 		parent::__construct(__CLASS__, $this->name, $widget_options, $this->control_options);
 	}
 
+    /**
+     * Generates a unique id for a field instance (because there may be many widgets).
+     * Make corrections: WP doesn't expect a classname with a backslash (namespace)
+     * jQuery isn't able to target a field id if the identifier has invalid characters.
+     */
+    public function get_field_id($id) {
+        $id = parent::get_field_id($id);
+        return str_replace('\\', '_', $id);
+    }
+    public function get_field_name($name) {
+        $name = parent::get_field_id($name);
+        return str_replace('\\', '_', $name);
+    }
+    
+    
 	//------------------------------------------------------------------------------
 	/**
 	 * Create only form elements.
 	 */
 	public function form($instance) {
-		
-		//$snippets = Base::get_snippets(true);
-		$snippets = array();
 
-//		print_r($snippets); return;
 		$snippet_options = '<option></option>';
-		foreach($snippets as $s => $info) {
-			$snippet_options .= sprintf('<option value="%s">%s</option>',$info['path'],$s);
+		foreach (self::$dirs as $d => $exists) {
+            $snippets = (array) Base::get_snippets($d,self::$ext);
+    		foreach ($snippets as $s) {
+    			$snippet_options .= sprintf('<option value="%s">%s</option>',$s,Base::get_shortname($s,self::$ext));
+    		}
 		}
 		
 		$args_str = ''; // formatted args for the user to look at so they remember what they searched for.
@@ -56,7 +71,7 @@ class Widget extends \WP_Widget {
 			<input type="text" name="'.$this->get_field_name('title').'" id="'.$this->get_field_id('title').'" value="'.$instance['title'].'" />
 			
 			<label for="" class="php_snippets_label">'.__('Snippet', 'php_snippets').'</label>
-			<select name="'.$this->get_field_name('snippet').'" id="'.$this->get_field_id('snippet').'" onchange="add_php_snippet(this.value,\''.$this->get_field_id('content').'\');">'
+			<select name="'.$this->get_field_name('snippet').'" id="'.$this->get_field_id('snippet').'" onchange="javascript:add_php_snippet(this.value,\''.$this->get_field_id('content').'\');">'
 				.$snippet_options.
 			'</select>
 			
@@ -94,10 +109,14 @@ class Widget extends \WP_Widget {
 	//------------------------------------------------------------------------------
 	//! Static
 	public static function register_this_widget() {
-		$php_license = License::check();
-		if($php_license == 'valid') {
-			register_widget(__CLASS__);
-		}
+        register_widget(__CLASS__);
+	}
+	
+	public static function setDirs($dirs) {
+	   self::$dirs = $dirs;
+	}
+	public static function setExt($ext) {
+	   self::$ext = $ext;
 	}
 }
 

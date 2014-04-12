@@ -1,0 +1,5 @@
+<?php
+exit;
+print 'This file';
+has 
+print 'bad syntax';
