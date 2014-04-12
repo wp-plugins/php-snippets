@@ -8,7 +8,8 @@ Author: Everett Griffiths
 Version: 0.9
 Author URI: http://craftsmancoding.com/
 */
-
+define('PHP_SNIPPETS_PATH', dirname(__FILE__) );
+define('PHP_SNIPPETS_URL', WP_PLUGIN_URL .'/'. basename( PHP_SNIPPETS_PATH ) );
 //------------------------------------------------------------------------------
 //! Tests
 //------------------------------------------------------------------------------
@@ -30,12 +31,6 @@ function php_snippets_preflight() {
 
 	global $php_snippet_errors;
 
-    $php_license = PhpSnippets\License::check();
-    // Don't show this when we're posting data
-    if($php_license != 'valid' && empty($_POST)) {
-        print PhpSnippets\License::get_error_msg();
-    }
-	
 	if ( !empty($php_snippet_errors) ) {
 		$error_items = '';
 		foreach ( $php_snippet_errors as $e ) {
@@ -57,6 +52,12 @@ function php_snippets_preflight() {
 
 add_action('admin_notices', 'php_snippets_preflight');
 
+// Add a menu item
+add_action('admin_menu', function(){
+    add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 'php-snippets', function(){
+        include PHP_SNIPPETS_PATH.'/controllers/settings.php';
+    });
+});
 
 // All clear?  Fire the missiles.
 if (empty($php_snippet_errors)) include_once dirname(__FILE__).'/loader.php';

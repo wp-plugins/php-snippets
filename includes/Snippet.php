@@ -22,10 +22,10 @@ class Snippet {
 	public static function __callStatic($name, $args) {
 
 		// get the file by name
-		if (isset(self::$snippets[$name]['path']) && file_exists(self::$snippets[$name]['path'])) {
+		if (isset(self::$snippets[$name]) && file_exists(self::$snippets[$name])) {
 
-			// TODO: does basename.defaults.php exist?  If yes, include it and use shortcode_atts()
-			// TODO: make all arguments avail. to a single var, e.g $scriptProperties, for snippets that have a variable # of inputs
+			// TODO: make all arguments avail. to a single var, e.g $scriptProperties, 
+			// for snippets that have a variable # of inputs
 			if (isset($args[0]) && is_array($args[0])) {
 				extract($args[0]);
 			}
@@ -34,13 +34,23 @@ class Snippet {
 				$content = $args[1];
 			}
 			ob_start();
-			include self::$snippets[$name]['path'];
+			include self::$snippets[$name];
 			$content = ob_get_clean();
 			return $content;
 		}
 		else {
 			return sprintf(__('PHP Snippet does not exist: %s', 'php_snippets'), "<code>$name</code>");
 		}
+	}
+	
+	/**
+	 * Defines a snippet by mapping a tag (shortcode) to a file
+	 *
+	 * @param string $tag identifier (the shortcode base), e.g. 'my_shortcode'
+	 * @param string $fullpath to the file to be included.
+	 */
+	public static function map($tag,$fullpath) {
+        self::$snippets[$tag] = $fullpath;
 	}
 }
 /*EOF*/

@@ -10,8 +10,6 @@ if (!defined('WP_PLUGIN_DIR')) exit('No direct script access allowed');
 //! Load up!
 //  plugin_dir_path(__FILE__)
 //------------------------------------------------------------------------------
-define('PHP_SNIPPETS_PATH', dirname(__FILE__) );
-define('PHP_SNIPPETS_URL', WP_PLUGIN_URL .'/'. basename( PHP_SNIPPETS_PATH ) );
 require_once PHP_SNIPPETS_PATH . '/includes/Base.php';
 require_once PHP_SNIPPETS_PATH . '/includes/License.php';
 
@@ -74,6 +72,7 @@ add_action('init',function(){
 		}
 	}
 
+    // TODO
 	//load_plugin_textdomain( 'php_snippets', false, PHP_SNIPPETS_PATH.'/lang/' );
 	global $shortcode_tags;
 	$existing_shortcodes = array_keys($shortcode_tags);
@@ -83,6 +82,10 @@ add_action('init',function(){
     $defined_dirs = Phpsnippets\Base::get_value($ps_data, 'snippet_dirs', array());
     $ext = Phpsnippets\Base::get_value($ps_data, 'snippet_suffix', '.php');
     $include_built_in = Phpsnippets\Base::get_value($ps_data, 'show_builtin_snippets', true);
+    
+    // Set any placeholders we want to support in directory names
+    Phpsnippets\Base::set_placeholder('ABSPATH', ABSPATH);
+    
     // Get all snippets in all dirs
     $dirs = Phpsnippets\Base::get_dirs($defined_dirs,$include_built_in);
     // Loop thru each dir
@@ -90,24 +93,10 @@ add_action('init',function(){
         $snippets = (array) Phpsnippets\Base::get_snippets($d,$ext);
         // Loop thru each file
     	foreach ($snippets as $s) {
-            if (!$info = Phpsnippets\Base::get_snippet_info($s)) {
-    			$msg = sprintf(__('There was as problem reading file %f', 'php_snippets'), "<em>$s</em>");
-    			Phpsnippets\Base::register_warning($msg);
-                continue; // skip errors
-            }
-            $shortcode = Phpsnippets\Base::get_tag($s,$ext);
-            Phpsnippets\Snippet::$snippets[$shortcode] = $info; // save it for later 
-    		if (in_array($shortcode, $existing_shortcodes)) {
-    			$msg = sprintf(__('The name %s is already taken by an existing shortcode. Please re-name your file.', 'php_snippets'), "<em>$name</em>");
-    			Phpsnippets\Base::register_warning($msg);
-    			continue;
-    		}
-    		// success
-            add_shortcode($shortcode, 'Phpsnippets\Snippet::'.$shortcode);
+            Phpsnippets\Base::add_shortcode($s,$ext);
     	}    
     }
-
-		
+	
     // Register Ajax Calls
 	Phpsnippets\Ajax::$controllers['dir_snippets'] = PHP_SNIPPETS_PATH .'/ajax-controllers/dir_snippets.php';
 	Phpsnippets\Ajax::$controllers['get_snippet_shortcode'] = PHP_SNIPPETS_PATH .'/ajax-controllers/get_snippet_shortcode.php';
@@ -118,15 +107,5 @@ add_action('init',function(){
 });
 
 add_action('widgets_init', 'PhpSnippets\Widget::register_this_widget');
-
-// Add a menu item
-add_action('admin_menu', function(){
-    add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 'php-snippets', function(){
-        include PHP_SNIPPETS_PATH.'/controllers/settings.php';
-    });
-});
-
-
-
 
 /*EOF*/

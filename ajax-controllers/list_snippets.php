@@ -29,9 +29,9 @@ if (!empty(PhpSnippets\Base::$warnings)) {
 	$data['content'] .= '</div><br>';	
 }
 
-foreach ($dirs as $dir => $exist) {
+foreach ($dirs as $dir => $exists) {
 
-	if($exist) {
+	if($exists) {
 		$snippets = PhpSnippets\Base::get_snippets($dir,$ext); 
 		if(!empty($snippets)) {
 			foreach ($snippets as $shortname => $snippet) {

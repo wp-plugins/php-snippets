@@ -27,7 +27,7 @@
  * );
  * </script>
  *
- * @package CCTM
+ * @package phpsnippets
  */
 namespace PhpSnippets;
 

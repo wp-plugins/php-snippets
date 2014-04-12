@@ -1,4 +1,5 @@
 <?php
+// Working directly with wordpress fails. See https://github.com/sebastianbergmann/phpunit/issues/451
 //require_once dirname(__FILE__) . '/../../../../wp-config.php';
 require_once dirname(dirname(__FILE__)).'/includes/Base.php';
 /**
@@ -23,7 +24,7 @@ class unitTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Test get_snippets function
 	 */
-    public function testGet_snippets() {
+    public function testGetSnippetsFromDirectory() {
         $snippets = Phpsnippets\Base::get_snippets(dirname(__FILE__).'/dir1', '.snippet.php');
         $this->assertTrue(count($snippets) == 4 , 'There are 4 .snippet.php files in dir1');
         $snippets = Phpsnippets\Base::get_snippets(dirname(__FILE__).'/dir1', '.php');
@@ -34,20 +35,21 @@ class unitTest extends PHPUnit_Framework_TestCase {
     /**
 	 * Test get_snippets function
 	 */
-    public function testGet_dirs() {
-    	if ( !defined('ABSPATH') )
-		define('ABSPATH',  dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/');
-        $dirs = Phpsnippets\Base::get_dirs(array(dirname(__FILE__).'/dir1',dirname(__FILE__).'/dir2','test'),0);
+    public function testGetDirs() {
+        $data = array(dirname(__FILE__).'/dir1',dirname(__FILE__).'/dir2','test');
+        $dirs = Phpsnippets\Base::get_dirs($data,0);
         $this->assertTrue(count(array_filter($dirs)) == 2 , 'There are 2 Valid dirs');
     }
+
 
     /**
      * test get_snippet_info
      */
-    public function testGet_snippet_info() 
-    {
+
+    public function testGetSnippetInfo() {
     	$info = Phpsnippets\Base::get_snippet_info(dirname(__FILE__).'/dir1/time_delay.snippet.php');
     	$this->assertTrue(is_array($info), 'Snippet is Valid.');
 
     }
+
 }

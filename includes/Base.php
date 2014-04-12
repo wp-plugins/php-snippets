@@ -17,16 +17,6 @@
 namespace PhpSnippets; 
 class Base {
 
-	/**
-	 * Contains the Ajax object (PHP_Ajax)
-	 */
-	public static $Ajax;
-
-	/**
-	 * Holds the Snippet object (PHP_Snippet)
-	 */
-	public static $Snippet;
-
 	
 	/**
 	 * The key in wp_postmeta
@@ -38,37 +28,48 @@ class Base {
 	 */ 
 	public static $warnings = array();
 	
-	
-	/**
-	 * All snippets
-	 */
-	public static $snippets = array();
 
 	/**
 	 * All directories
 	 */
 	public static $directories = array();
 
+    /**
+     * Any [+placeholder+] you want to use in your directory
+     * names, e.g. [+ABSPATH+]
+     */
+    public static $placeholders = array();
 
+    /**
+     * Register the shortcode using WP's add_shortcode function
+     *
+     * @param string $fulllpath /full/path/to/file.php
+     * @param string $ext file extension. This is stripped to calculate the shortcode
+     * @return void
+     */
+    public static function add_shortcode($fullpath,$ext) {
+        $tag = self::get_tag($fullpath,$ext);
+        Snippet::map($tag,$fullpath);
 
+		// success
+        add_shortcode($tag, 'Phpsnippets\Snippet::'.$tag);    
+    }
+    
 	/**
 	 * Test out a given directory to make sure it has the correct permissions
 	 *
 	 * @param	string	full path to directory to check.
 	 * @return	boolean	true on success (permissions are ok), false on failure (permissions are borked)
 	 */
-	public static function check_permissions($dir) {
+	public static function dir_exists($dir) {
 			if(trim($dir) == '') {
 				return;
 			}
-			$dir = self::parse_dirname($dir);
+			$dir = self::parse($dir,self::$placeholders);
 			if (!file_exists($dir)) {
-				// throw error!
-				self::register_warning($dir);
 				return false;
 			}
 			if (!is_dir($dir)) {
-				self::register_warning(sprintf(__('The selected Snippet directory must be a directory, not a file! %s', 'php_snippets'), "<code>$dir</code>"));
 				return false;		
 			}
 
@@ -117,15 +118,21 @@ class Base {
 		}
 		if(!empty($dirs)) {
 			foreach($dirs as $dir){
-				self::$directories[$dir] = self::check_permissions($dir) ;
+				self::$directories[$dir] = self::dir_exists($dir) ;
 			}
 		}
 
 		return self::$directories;
 	}
 	
-	
-	//------------------------------------------------------------------------------
+	/**
+	 *
+	 *
+	 */
+    public static function set_placeholder($key,$value) {
+        self::$placeholders[$key] = $value;
+    }
+    	
 	/**
 	 * Given the /full/path/to/snippet.php, read a description out of the header,
 	 * and read a sample shortcode.
@@ -228,12 +235,15 @@ class Base {
 
     //------------------------------------------------------------------------------
     /**
-     * Parse a directory name -- this supports 
+     * Parse a string with replacements
      * @param stirng $dirname
      * @return string $dirname
      */
-	public static function parse_dirname($dirname) {
-        return str_replace('[+ABSPATH+]', ABSPATH, $dirname);
+	public static function parse($str,$placeholders) {
+        foreach ($placeholders as $k => $v) {
+            $str = str_replace('[+'.$k.'+]', $v, $str);
+        }
+        return $str;
 	}
 	
 }

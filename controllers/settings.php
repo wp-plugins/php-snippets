@@ -25,9 +25,6 @@ $data['warnings'] = Phpsnippets\Base::get_value($ps_data, 'warnings', array());
 $data['snippet_suffix'] = Phpsnippets\Base::get_value($ps_data, 'snippet_suffix');
 $data['show_builtin_snippets'] = Phpsnippets\Base::get_value($ps_data, 'show_builtin_snippets');
 
-//$php_license = PhpSnippets\License::check();
-//PhpSnippets\License::activate_page();
-
 // Save if submitted...
 if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_name']) ) {
   

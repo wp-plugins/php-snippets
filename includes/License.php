@@ -137,7 +137,7 @@ class License {
 		$cache_key    = strtolower(str_replace(' ', '_', self::$plugin));
 		$data         = get_transient($cache_key);
 		$key_old = trim(get_option(self::$key_option_name));
-	
+
 		if ($data && $key_old == $data->key) {
 			return $status;
 		} 
@@ -147,17 +147,40 @@ class License {
 				'edd_action'=> 'check_license', 
 				'license' 	=> $license, 
 				'item_name' => urlencode( self::$plugin ), // the name of our product in EDD,
-				'url'       => home_url()
+				'url'       => home_url(),
+				'rand' => uniqid() // cache-busting
 			);
-		
+
 			// Call the custom API.
 			$response = wp_remote_get( add_query_arg( $api_params, self::$store_url ) );
-	 
+
+            /*
+            // If the request is blocked (e.g. by firewall rules), then the response is something like 
+            // the following:
+            WP_Error Object
+            (
+                [errors] => Array
+                    (
+                        [http_request_failed] => Array
+                            (
+                                [0] => couldn't connect to host at xyz.com:80
+                            )
+            
+                    )
+            
+                [error_data] => Array
+                    (
+                    )
+            
+            )
+            */			
+            // print '<pre>'; print_r($response); exit;
+            
 			// make sure the response came back okay
-			if ( is_wp_error( $response ) )
-				return false;
-			$data = json_decode( wp_remote_retrieve_body( $response ) );
-			$data->key = trim( get_option( self::$key_option_name ) );
+			if (empty($response)) return false;
+			if (is_wp_error($response)) return false;
+			$data = json_decode(wp_remote_retrieve_body($response));
+			$data->key = trim( get_option( self::$key_option_name));
 
 	 		set_transient( $cache_key, $data, 60*60 );
 			return $status;	
