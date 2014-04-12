@@ -15,7 +15,7 @@
  *
  */
 namespace PhpSnippets; 
-class Functions {
+class Base {
 
 	/**
 	 * Contains the Ajax object (PHP_Ajax)
@@ -38,11 +38,6 @@ class Functions {
 	 */ 
 	public static $warnings = array();
 	
-	/**
-	 * We store these to ensure that there are no conflicts when a user creates their own.
-	 */
-	public static $existing_shortcodes = array();
-	
 	
 	/**
 	 * All snippets
@@ -54,11 +49,6 @@ class Functions {
 	 */
 	public static $directories = array();
 
-
-
-	public static function add_menu() {
-		add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 'php-snippets', 'PhpSnippets\Functions::settings');
-	}
 
 
 	/**
@@ -84,19 +74,6 @@ class Functions {
 
 		// Assume that permissions are Ok
 		return true;
-	}
-	
-	/**
-	 * Create custom post-type menu
-	 */
-	public static function create_admin_menu() {
-	 	add_options_page( 
-	 		'PHP Snippets', 					// page title
-	 		'PHP Snippets', 					// menu title
-			'manage_options', 					// capability
-	 		'php_snippets', 					// menu slug
-	 		'PhpSnippets\Functions::get_admin_page' // callback	 	
-	 	);
 	}
 	
 	/**
@@ -161,7 +138,9 @@ class Functions {
 		if (file_exists($path)) {
 			$info['path'] 		= $path;
 			$info['desc'] 		= '';
-			$info['shortcode'] 	= '';
+			$info['shortcode'] 	= ''; // e.g. [my_snippet] or [hey]you[/hey]
+			$info['tag']        = ''; // e.g. my_snippet
+			
 			$contents = file_get_contents($path);
 			
 			// Get description
@@ -181,6 +160,18 @@ class Functions {
 		
 		return $info;
 	}
+
+    /**
+     * E.g. convert '/path/to/something.snippet.php' to 'something'
+     * This is the tag by which we can identify the snippet.
+     * @param string full path to file
+     * @param string extension
+     */
+    public static function get_tag($file,$ext) {
+        $file = basename($file);
+        $file = preg_replace('/'.preg_quote($ext).'$/i','',$file);
+        return $file;
+    }
 
 	//------------------------------------------------------------------------------
 	/**
@@ -205,47 +196,6 @@ class Functions {
 				return $hash[$key];
 			}
 		}
-	}
-
-	//------------------------------------------------------------------------------
-	/**
-	 * Used to initialize the plugin
-	 */
-	public static function init() {
-		
-		if (is_admin()) {		
-			//wp_enqueue_script('media-upload'); // We need the send_to_editor() function.
-			wp_enqueue_script('jquery');
-			// thickbox must be loaded for firefox
-			wp_enqueue_style('thickbox');
- 			wp_enqueue_script('thickbox');
-
-			wp_enqueue_script('php_snippets_manager', PHP_SNIPPETS_URL . '/js/manager.js','','4.0.0' );
-			wp_register_style('php_snippets_css', PHP_SNIPPETS_URL . '/css/style.css');
-			wp_enqueue_style('php_snippets_css');
-		}
-		
-		// The following makes PHP variables available to Javascript the "correct" way.
-		// See http://code.google.com/p/wordpress-custom-content-type-manager/issues/detail?id=226
-		$data = array();
-		$data['url'] = PHP_SNIPPETS_URL;
-		$data['ajax_url'] = admin_url( 'admin-ajax.php' );
-		$data['ajax_nonce'] = wp_create_nonce('php_snippets_nonce');
-		// Make sure your 2nd argument is not the name of an existing JS function!
-		wp_localize_script( 'php_snippets_manager', 'php_snippets', $data );
-	
-			
-		//load_plugin_textdomain( 'php_snippets', false, PHP_SNIPPETS_PATH.'/lang/' );
-		//self::$data = get_option('php_snippets_data', array());
-		global $shortcode_tags;
-		self::$existing_shortcodes = array_keys($shortcode_tags);
-		//print '<pre>'; print_r($shortcode_tags); print '</pre>'; exit;
-		
-		// Add a menu item
-		add_action('admin_menu', 'PhpSnippets\Functions::add_menu');
-		
-		self::$Snippet = new Snippet();
-		self::$Ajax = new Ajax();
 	}
 
 	//------------------------------------------------------------------------------
@@ -284,36 +234,7 @@ class Functions {
      */
 	public static function parse_dirname($dirname) {
         return str_replace('[+ABSPATH+]', ABSPATH, $dirname);
-	}     
-	
-	//------------------------------------------------------------------------------
-	/**
-	 * Generate the settings page
-	 */
-	public static function settings() {
-		include PHP_SNIPPETS_PATH.'/controllers/settings.php';
 	}
 	
-	//------------------------------------------------------------------------------
-	/**
-	 * Adds the button to the TinyMCE 1st row.
-	 * @param array $buttons
-	 * @return array
-	 */
-	public static function tinyplugin_add_button($buttons) {
-	    array_push($buttons, '|', 'php_snippets');
-	    return $buttons;
-	}
-	
-	//------------------------------------------------------------------------------
-	/**
-	 * @param array $plugin_array
-	 * @return array
-	 */
-	public static function tinyplugin_register($plugin_array) {
-	    $url = PHP_SNIPPETS_URL.'/js/editor_plugin.js';
-	    $plugin_array['php_snippets'] = $url;
-	    return $plugin_array;
-	}
 }
 /*EOF*/

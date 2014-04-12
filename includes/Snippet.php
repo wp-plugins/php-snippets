@@ -11,7 +11,7 @@
 namespace PhpSnippets;
 class Snippet {
 
-	public $snippets = array();
+	public static $snippets = array();
 
 	/**
 	 * This is the function that dynamically handles all shortcodes.
@@ -19,10 +19,10 @@ class Snippet {
 	 * @param string $name
 	 * @param mixed $args
 	 */
-	public function __call($name, $args) {
+	public static function __callStatic($name, $args) {
 
 		// get the file by name
-		if (isset($this->snippets[$name]['path']) && file_exists($this->snippets[$name]['path'])) {
+		if (isset(self::$snippets[$name]['path']) && file_exists(self::$snippets[$name]['path'])) {
 
 			// TODO: does basename.defaults.php exist?  If yes, include it and use shortcode_atts()
 			// TODO: make all arguments avail. to a single var, e.g $scriptProperties, for snippets that have a variable # of inputs
@@ -34,36 +34,12 @@ class Snippet {
 				$content = $args[1];
 			}
 			ob_start();
-			include $this->snippets[$name]['path'];
+			include self::$snippets[$name]['path'];
 			$content = ob_get_clean();
 			return $content;
 		}
 		else {
 			return sprintf(__('PHP Snippet does not exist: %s', 'php_snippets'), "<code>$name</code>");
-		}
-	}
-
-	/**
-	 * Register all shortcodes.  A shortcode is registered for each valid snippet file.
-	 */
-	public function __construct() {
-		// Register the shortcodes
-		//$this->snippets = (array) Functions::get_snippets(); //array(); // get snippets
-		$this->snippets = array();
-		foreach ($this->snippets as $name => $data) {
-			if (!in_array($name, Functions::$existing_shortcodes)) {
-				
-				$php_license = License::check();
-				if($php_license == 'valid') {
-					add_shortcode( $name , array($this, $name));
-				}
-				
-			}
-			else {
-				$msg = sprintf(__('The name %s is already taken by an existing shortcode. Please re-name your file.', 'php_snippets'), "<em>$name</em>");
-				Functions::register_warning($msg);
-			}
-
 		}
 	}
 }

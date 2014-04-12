@@ -7,6 +7,9 @@
 	<?php print $data['licensing_fields']; ?>
 	<?php //print htmlentities($data['snippet_dir']); ?>
 	<label for="snippet_dir" class="php_snippets_label">Snippet Directory</label>
+	<div class="php_snippets_description">
+	   <p>Choose one or more directories that contain your PHP Snippets. These should be full paths, not URLs, e.g. <code>/home/html/wp-content/snippets</code> (omit the trailing slash).  Use PHP's <code>getcwd()</code> or the Linux <code>pwd</code> command to get the full path to the directory.  You may use the <code>[+ABSPATH+]</code> placeholder to get a calculated path to your site root, otherwise be sure to update this setting if you move your site!</p>
+	</div>
 	<div id="dir_wrap">
 		<?php if(!empty($data['snippet_dirs'])) : ?>
 			<?php foreach ($data['snippet_dirs'] as $dir) : ?>
@@ -21,16 +24,11 @@
 		<?php endif ?>
 	</div>
 	
-
-	<button onclick="add_field_dir(event);"class="button" id="add_dir">Add Directory</button>
+	<button onclick="javascript:add_field_dir(event);"class="button" id="add_dir">Add Directory</button>
 	
-
-	<div class="php_snippets_description">
-		<p>This is the absolute path to the directory where you can store your PHP snippets, e.g. <code>/home/html/wp-content/snippets</code> (omit the trailing slash).  Use PHP's <code>getcwd()</code> or the Linux <code>pwd</code> command to get the full path to the directory.  <strong>DO NOT USE A URL!</strong> This MUST be a full path!  You may use the <code>[+ABSPATH+]</code> placeholder to get a calculated path to your site root, otherwise be sure to update this setting if you move your site!</p>
-    </div>
-    		
-	
-		<label for="snippet_suffix" class="php_snippets_label">Snippet Suffix</label>
+	<br/>
+	<br/>		
+       <label for="snippet_suffix" class="php_snippets_label">Snippet Suffix</label>
 	   <input type="text" name="snippet_suffix" id="snippet_suffix" size="50" value="<?php print !empty($data['snippet_suffix']) ? htmlentities($data['snippet_suffix']) : '.snippet.php'; ?>"/>
 
     	<div class="php_snippets_description">

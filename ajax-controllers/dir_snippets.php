@@ -12,13 +12,13 @@ $data['pagetitle'] = __('Snippets and Directory List', 'php_snippets');
 $data['content'] = '';
 
 
-$ps_data = get_option(PhpSnippets\Functions::db_key, array());
-$snippet_dirs = PhpSnippets\Functions::get_value($ps_data, 'snippet_dirs', array());
-$show_builtin_snippets = PhpSnippets\Functions::get_value($ps_data, 'show_builtin_snippets', 0);
-$ext = PhpSnippets\Functions::get_value($ps_data, 'snippet_suffix');
-$dirs = PhpSnippets\Functions::get_dirs($snippet_dirs,$show_builtin_snippets);
+$ps_data = get_option(PhpSnippets\Base::db_key, array());
+$snippet_dirs = PhpSnippets\Base::get_value($ps_data, 'snippet_dirs', array());
+$show_builtin_snippets = PhpSnippets\Base::get_value($ps_data, 'show_builtin_snippets', 0);
+$ext = PhpSnippets\Base::get_value($ps_data, 'snippet_suffix');
+$dirs = PhpSnippets\Base::get_dirs($snippet_dirs,$show_builtin_snippets);
 
-if (!empty(PhpSnippets\Functions::$warnings)) {
+if (!empty(PhpSnippets\Base::$warnings)) {
 	$data['content'] .= '<div id="php-snippets-errors" class="error"><p>Some of the directories you defined do not exist!</p></div><br>';	
 }
 
@@ -28,10 +28,10 @@ foreach ($dirs as $dir => $exist) {
 	$data['content'] .= "<div class='snippet_dir $class_dir'>$dir $class_dir_error</div>";
 
 	if($exist) {
-		$snippets = PhpSnippets\Functions::get_snippets($dir,$ext); 
+		$snippets = PhpSnippets\Base::get_snippets($dir,$ext); 
 		if(!empty($snippets)) {
 			foreach ($snippets as $shortname => $snippet) {
-				$info = PhpSnippets\Functions::get_snippet_info($snippet);
+				$info = PhpSnippets\Base::get_snippet_info($snippet);
 				
 				if (empty($info['shortcode'])) {
 					$info['shortcode'] = "[$shortname]";
@@ -53,7 +53,7 @@ if($php_license !==  'valid') {
 	$data['content'] = PhpSnippets\License::get_error_msg();
 }
 
-print PhpSnippets\Functions::load_view('tb_setting.php', $data);
+print PhpSnippets\Base::load_view('tb_setting.php', $data);
 
 
 /*EOF*/

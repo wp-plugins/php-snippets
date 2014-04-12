@@ -1,7 +1,7 @@
 <?php
 /**
- * This widget allows the user to choose a PHP Snippet to power a widget.
- *
+ * This widget allows the user to choose a local file (i.e. a PHP Snippet)
+ * be used to generate a widget.
  */
 namespace PhpSnippets; 
 class Widget extends \WP_Widget {
@@ -21,15 +21,6 @@ class Widget extends \WP_Widget {
 		);
 		
 		parent::__construct(__CLASS__, $this->name, $widget_options, $this->control_options);
-
-		// We only need the additional functionality for the back-end.
-		// See http://code.google.com/p/wordpress-custom-content-type-manager/issues/detail?id=331
-		//if( is_admin() && is_active_widget( false, false, $this->id_base, true )) {	
-		if( is_admin() && 'widgets.php' == substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/')+1)) {
-			wp_enqueue_script('thickbox');
-			wp_register_script('PHP_Snippet_Widget', PHP_SNIPPETS_URL.'/js/widget.js', array('jquery'));
-			wp_enqueue_script('PHP_Snippet_Widget');
-		}
 	}
 
 	//------------------------------------------------------------------------------
@@ -38,7 +29,7 @@ class Widget extends \WP_Widget {
 	 */
 	public function form($instance) {
 		
-		//$snippets = Functions::get_snippets(true);
+		//$snippets = Base::get_snippets(true);
 		$snippets = array();
 
 //		print_r($snippets); return;

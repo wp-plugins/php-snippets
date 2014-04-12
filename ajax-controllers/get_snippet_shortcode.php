@@ -13,7 +13,7 @@ elseif (empty($_POST['snippet_path'])) {
 	return '';
 }
 
-$info = PhpSnippets\Functions::get_snippet_info($_POST['snippet_path']); 
+$info = PhpSnippets\Base::get_snippet_info($_POST['snippet_path']); 
 
 print $info['shortcode'];
 

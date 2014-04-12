@@ -26,7 +26,7 @@ if ( version_compare( phpversion(), $required_php_version, '<') ) {
 //------------------------------------------------------------------------------
 //! Functions -- minimal for handling tests
 //------------------------------------------------------------------------------
-function php_snippets_print_notices() {
+function php_snippets_preflight() {
 
 	global $php_snippet_errors;
 
@@ -55,30 +55,10 @@ function php_snippets_print_notices() {
 	}
 }
 
-//------------------------------------------------------------------------------
-//! Load up!
-//  plugin_dir_path(__FILE__)
-//------------------------------------------------------------------------------
-define('PHP_SNIPPETS_PATH', dirname(__FILE__) );
-define('PHP_SNIPPETS_URL', WP_PLUGIN_URL .'/'. basename( PHP_SNIPPETS_PATH ) );
-require_once PHP_SNIPPETS_PATH . '/includes/Functions.php';
-require_once PHP_SNIPPETS_PATH . '/includes/License.php';
-
-add_action('admin_notices', 'php_snippets_print_notices');
-
-if (empty($php_snippet_errors)) {
-    require_once PHP_SNIPPETS_PATH . '/includes/Snippet.php';
-    require_once PHP_SNIPPETS_PATH . '/includes/Ajax.php';
-    require_once PHP_SNIPPETS_PATH . '/includes/Widget.php';
-    
-    add_filter('mce_external_plugins', 'PhpSnippets\Functions::tinyplugin_register');
-    add_filter('mce_buttons', 'PhpSnippets\Functions::tinyplugin_add_button', 0);
-    add_action('init','PhpSnippets\Functions::init');
-    add_action('widgets_init', 'PhpSnippets\Widget::register_this_widget');
-   
-}
+add_action('admin_notices', 'php_snippets_preflight');
 
 
-
+// All clear?  Fire the missiles.
+if (empty($php_snippet_errors)) include_once dirname(__FILE__).'/loader.php';
 
 /*EOF*/

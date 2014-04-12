@@ -37,7 +37,7 @@ class Ajax {
 	 * Contains key value pairs where key = basename of controller (no .php extension)
 	 * and value is full path to the controller file.
 	 */
-	public $controllers = array();
+	public static $controllers = array();
 
 	//------------------------------------------------------------------------------
 	/**
@@ -50,13 +50,13 @@ class Ajax {
 	 * @param string $name
 	 * @param mixed $args
 	 */
-	public function __call($name, $args) {
+	public static function __callStatic($name, $args) {
 
-		if (!isset($this->controllers[$name])) {
+		if (!isset(self::$controllers[$name])) {
 			die(sprintf(__('Invalid Ajax controller: %s', 'php_snippets'), "<em>$name</em>"));
 		}
 
-		// The nonce here should line up with the one localized in Functions::init()
+		// The nonce here should line up with the one localized in the loader.php
 		$nonce = '';
 		if (isset($_REQUEST[$name.'_nonce'])) {
 			$nonce = $_REQUEST[$name.'_nonce'];
@@ -66,7 +66,7 @@ class Ajax {
 			die(sprintf(__('Invalid nonce for %s', 'php_snippets'), "<em>$name</em>"));
 		}
 
-		include $this->controllers[$name];
+		include self::$controllers[$name];
 
 		exit;
 	}
@@ -77,6 +77,7 @@ class Ajax {
 	 * The construct: here we add "listeners" to any defined Ajax event.  Each Ajax
 	 * controller has its own event (i.e. action).
 	 */
+/*
 	public function __construct() {
 
 		// Scan directory
@@ -95,6 +96,7 @@ class Ajax {
 			add_action( 'wp_ajax_'.$shortname, array($this, $shortname) );
 		}
 	}
+*/
 }
 
 /*EOF*/

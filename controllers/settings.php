@@ -18,12 +18,12 @@ $data['nonce_name']  = 'php_snippets_settings_nonce';
 ob_start();
 PhpSnippets\License::get_fields();
 
-$ps_data = get_option(self::db_key, array());
+$ps_data = get_option(Phpsnippets\Base::db_key, array());
 $data['licensing_fields'] = ob_get_clean();
-$data['snippet_dirs'] = self::get_value($ps_data, 'snippet_dirs', array());
-$data['warnings'] = self::get_value($ps_data, 'warnings', array());
-$data['snippet_suffix'] = self::get_value($ps_data, 'snippet_suffix');
-$data['show_builtin_snippets'] = self::get_value($ps_data, 'show_builtin_snippets');
+$data['snippet_dirs'] = Phpsnippets\Base::get_value($ps_data, 'snippet_dirs', array());
+$data['warnings'] = Phpsnippets\Base::get_value($ps_data, 'warnings', array());
+$data['snippet_suffix'] = Phpsnippets\Base::get_value($ps_data, 'snippet_suffix');
+$data['show_builtin_snippets'] = Phpsnippets\Base::get_value($ps_data, 'show_builtin_snippets');
 
 //$php_license = PhpSnippets\License::check();
 //PhpSnippets\License::activate_page();
@@ -51,9 +51,9 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
 
     	// A little cleanup before we handoff to save_definition_filter
 
-    	$snippet_dirs = self::get_value($_POST, 'snippet_dirs',array());
-    	$snippet_suffix = self::get_value($_POST, 'snippet_suffix');
-        $show_builtin_snippets = self::get_value($_POST, 'show_builtin_snippets');
+    	$snippet_dirs = Phpsnippets\Base::get_value($_POST, 'snippet_dirs',array());
+    	$snippet_suffix = Phpsnippets\Base::get_value($_POST, 'snippet_suffix');
+        $show_builtin_snippets = Phpsnippets\Base::get_value($_POST, 'show_builtin_snippets');
     	$snippet_suffix = !empty($snippet_suffix) ? trim(strip_tags($snippet_suffix)) : '.snippet.php';
         foreach ($snippet_dirs as $i => $dir) {
             // remove empty val
@@ -61,8 +61,8 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
                 unset($snippet_dirs[$i]);
             }
 
-            if (!PhpSnippets\Functions::check_permissions($dir)){
-                $warns = PhpSnippets\Functions::$warnings;
+            if (!PhpSnippets\Base::check_permissions($dir)){
+                $warns = PhpSnippets\Base::$warnings;
             }
         }
 
@@ -73,7 +73,7 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
         $ps_data['show_builtin_snippets'] = $show_builtin_snippets;
         $ps_data['warnings'] = $warns;
         
-        update_option(self::db_key, $ps_data);
+        update_option(Phpsnippets\Base::db_key, $ps_data);
         $data['snippet_dirs'] = $snippet_dirs;
         $data['warnings'] = $warns;
         $data['snippet_suffix'] = $snippet_suffix;
@@ -81,8 +81,8 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
     }
 }
 
-$data['content'] .= self::load_view('settings.php', $data);
+$data['content'] .= Phpsnippets\Base::load_view('settings.php', $data);
 
-print self::load_view('default.php', $data);
+print Phpsnippets\Base::load_view('default.php', $data);
 
 /*EOF*/

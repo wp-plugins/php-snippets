@@ -12,18 +12,18 @@ $data['pagetitle'] = __('Select a Snippet', 'php_snippets');
 $data['content'] = '';
 $data['other_shortcodes'] = '';
 
-//$snippets = PhpSnippets\Functions::get_snippets(); 
+//$snippets = PhpSnippets\Base::get_snippets(); 
 
-$ps_data = get_option(PhpSnippets\Functions::db_key, array());
-$snippet_dirs = PhpSnippets\Functions::get_value($ps_data, 'snippet_dirs', array());
-$show_builtin_snippets = PhpSnippets\Functions::get_value($ps_data, 'show_builtin_snippets', 0);
-$ext = PhpSnippets\Functions::get_value($ps_data, 'snippet_suffix');
-$dirs = PhpSnippets\Functions::get_dirs($snippet_dirs,$show_builtin_snippets);
+$ps_data = get_option(PhpSnippets\Base::db_key, array());
+$snippet_dirs = PhpSnippets\Base::get_value($ps_data, 'snippet_dirs', array());
+$show_builtin_snippets = PhpSnippets\Base::get_value($ps_data, 'show_builtin_snippets', 0);
+$ext = PhpSnippets\Base::get_value($ps_data, 'snippet_suffix');
+$dirs = PhpSnippets\Base::get_dirs($snippet_dirs,$show_builtin_snippets);
 
 
-if (!empty(PhpSnippets\Functions::$warnings)) {
+if (!empty(PhpSnippets\Base::$warnings)) {
 	$data['content'] = '<div id="php-snippets-errors" class="error">';
-	foreach (PhpSnippets\Functions::$warnings as $w => $tmp) {
+	foreach (PhpSnippets\Base::$warnings as $w => $tmp) {
 		$data['content'] .= sprintf('<p>%s : This Directory Doesnt Exist</p>', $w);
 	}
 	$data['content'] .= '</div><br>';	
@@ -32,10 +32,10 @@ if (!empty(PhpSnippets\Functions::$warnings)) {
 foreach ($dirs as $dir => $exist) {
 
 	if($exist) {
-		$snippets = PhpSnippets\Functions::get_snippets($dir,$ext); 
+		$snippets = PhpSnippets\Base::get_snippets($dir,$ext); 
 		if(!empty($snippets)) {
 			foreach ($snippets as $shortname => $snippet) {
-				$info = PhpSnippets\Functions::get_snippet_info($snippet);
+				$info = PhpSnippets\Base::get_snippet_info($snippet);
 				
 				if (empty($info['shortcode'])) {
 					$info['shortcode'] = "[$shortname]";
@@ -58,11 +58,11 @@ if($php_license !==  'valid') {
 	$data['content'] = PhpSnippets\License::get_error_msg();
 }
 /*
-foreach (PhpSnippets\Functions::$existing_shortcodes as $shortname) {
+foreach (PhpSnippets\Base::$existing_shortcodes as $shortname) {
 	$data['other_shortcodes'] = '<strong class="linklike" onclick="javascript:insert_shortcode(\'['.$shortname.']\');">'.$shortname.'</strong><br/>';
 }
 */
-print PhpSnippets\Functions::load_view('thickbox.php', $data);
+print PhpSnippets\Base::load_view('thickbox.php', $data);
 
 
 /*EOF*/
