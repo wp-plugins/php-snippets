@@ -6,15 +6,14 @@ Given a filepath, this returns the shortcode req'd to execute it
 if (!defined('PHP_SNIPPETS_PATH')) exit('No direct script access allowed');
 if (!current_user_can('edit_posts')) die('You do not have permission to do that.');
 
-if (!isset($_POST['snippet_path'])) {
-	die('Missing snippet_path');
-}
-elseif (empty($_POST['snippet_path'])) {
-	return '';
+if (!isset($_POST['snippet_path']) || empty($_POST['snippet_path'])) {
+	print 'Missing snippet_path.';
+	return;
 }
 
-$info = PhpSnippets\Base::get_snippet_info($_POST['snippet_path']); 
+$ps_data = get_option(Phpsnippets\Base::db_key, array());
+$ext = Phpsnippets\Base::get_value($ps_data, 'snippet_suffix', '.php');
 
-print $info['shortcode'];
+print PhpSnippets\Base::get_shortcode($_POST['snippet_path'],$ext); 
 
 /*EOF*/

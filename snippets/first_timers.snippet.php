@@ -1,10 +1,12 @@
 <?php
-/*
-Description: Show wrapped content only 1st-time visitors.  The content will be hidden on subsequent page views.
-Shortcode: [first_timers]Welcome newcomer's to this page![/first_time_visitors_only]
-
-This script simply sets a cookie to determine whether or not the user has been to a page or not.
-*/
+/**
+ * This script simply sets a cookie to determine whether or not the user has been to a page or not, then
+ * displays wrapped content to viewers.
+ *
+ * @description Show wrapped content only to 1st-time visitors.
+ * @ s h o rtcode [first_timers]Welcome newcomer's to this page![/first_timers]
+ * @content Welcome newcomer's to this page!
+ */
 global $post;
 
 $this_page = 0;

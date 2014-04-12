@@ -68,7 +68,6 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
         $ps_data['snippet_dirs'] = $snippet_dirs;
         $ps_data['snippet_suffix'] = $snippet_suffix;
         $ps_data['show_builtin_snippets'] = $show_builtin_snippets;
-        $ps_data['warnings'] = $warns;
         
         update_option(Phpsnippets\Base::db_key, $ps_data);
         $data['snippet_dirs'] = $snippet_dirs;

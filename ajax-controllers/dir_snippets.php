@@ -22,35 +22,37 @@ if (!empty(PhpSnippets\Base::$warnings)) {
 	$data['content'] .= '<div id="php-snippets-errors" class="error"><p>Some of the directories you defined do not exist!</p></div><br>';	
 }
 
-foreach ($dirs as $dir => $exist) {
-	$class_dir = $exist ? '' : 'snippet_dir_error';
-	$class_dir_error = $exist ? '' : '<span>:This Directory Doesnt Exist.</span>';
+// Each Directory gets a heading
+foreach ($dirs as $dir => $exists) {
+	$class_dir = $exists ? '' : 'snippet_dir_error';
+	$class_dir_error = $exists ? '' : '<span>: '.__('Directory Does not Exist','php_snippets').'</span>';
 	$data['content'] .= "<div class='snippet_dir $class_dir'>$dir $class_dir_error</div>";
 
-	if($exist) {
-		$snippets = PhpSnippets\Base::get_snippets($dir,$ext); 
-		if(!empty($snippets)) {
-			foreach ($snippets as $shortname => $snippet) {
-				$info = PhpSnippets\Base::get_snippet_info($snippet);
-				
-				if (empty($info['shortcode'])) {
-					$info['shortcode'] = "[$shortname]";
-				}
-				$data['content'] .= sprintf('<li>
-					<strong class="linklike">%s</strong> 
-					: <span class="php_snippets_desc">%s</span></li>'
-					, $shortname
-					, $info['desc']
-				);
+	if(!$exists) continue;
+	
+	$snippets = PhpSnippets\Base::get_snippets($dir,$ext); 
+	if(!empty($snippets)) {
+		foreach ($snippets as $shortname => $snippet) {
+			$info = PhpSnippets\Base::get_snippet_info($snippet);
+			//print '<pre>'; print_r($info); print '</pre>';
+            $info['shortcode'] = get_shortcode($info,$shortname);
+
+			$error_class = '';
+			if ($info['errors']) {
+                $info['desc'] = $info['errors'];
+                $error_class = ' php_snippets_error warning_field';
 			}
+			
+			$data['content'] .= sprintf('<li>
+				<strong class="linklike %s">%s</strong> 
+				: <span class="php_snippets_desc">%s</span></li>'
+				, $error_class
+				, $shortname
+				, $info['desc']
+			);
 		}
 	}
-}
 
-
-$php_license = PhpSnippets\License::check();
-if($php_license !==  'valid') {
-	$data['content'] = PhpSnippets\License::get_error_msg();
 }
 
 print PhpSnippets\Base::load_view('tb_setting.php', $data);

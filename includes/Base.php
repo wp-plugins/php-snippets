@@ -54,12 +54,28 @@ class Base {
 		// success
         add_shortcode($tag, 'Phpsnippets\Snippet::'.$tag);    
     }
+
+    /**
+     * Check the file for basic syntax errors
+     *
+     * @param string $fullpath to file
+     * @return mixed boolean false on no errors, string error message on error
+     */
+    public static function has_bad_syntax($fullpath) {
+        $fullpath = escapeshellarg($fullpath);
+        $msg = `php -d error_reporting=1 -l $fullpath`;
+        // No syntax errors detected in _____
+        if (strpos($msg, 'No syntax errors detected') === 0) {
+            return false;
+        }
+        return $msg;
+    }
     
 	/**
-	 * Test out a given directory to make sure it has the correct permissions
+	 * Verify a given directory
 	 *
 	 * @param	string	full path to directory to check.
-	 * @return	boolean	true on success (permissions are ok), false on failure (permissions are borked)
+	 * @return	boolean	true on success
 	 */
 	public static function dir_exists($dir) {
 			if(trim($dir) == '') {
@@ -73,7 +89,6 @@ class Base {
 				return false;		
 			}
 
-		// Assume that permissions are Ok
 		return true;
 	}
 	
@@ -132,6 +147,40 @@ class Base {
     public static function set_placeholder($key,$value) {
         self::$placeholders[$key] = $value;
     }
+
+    /**
+     * Given a snippet's info and its shortname, generate a shortcode to be pasted
+     * into the text editor.
+     *
+     * @param array $info
+     * @param string $shortname
+     * return string
+     */
+    public static function get_shortcode($info,$shortname) {
+        // @shortcode defined verbatim
+        if(isset($info['shortcode']) && !empty($info['shortcode'])) {
+            return $info['shortcode'];
+        }
+        // no parameters to help us out
+        if (!isset($info['params']) || empty($info['params'])) {
+            if (isset($info['content'])) {
+                return '['.$shortname.']'.$info['content'].'[/'.$shortname.']';
+            }
+            return "[$shortname]";
+        };
+        // Dynamic shortcode calculation
+        $shortcode = '['.$shortname;
+        foreach($info['params'] as $varname => $value) {
+            $shortcode.= ' '.trim(htmlspecialchars($varname)).'="'.trim(htmlspecialchars($value)).'"';
+        }
+        $shortcode .= ']';
+        if (isset($info['content']) && $info['content'] !== false) {
+            return $shortcode .= $info['content']. '[/'.$shortname.']';
+        }
+        return $shortcode;
+        
+        
+    }
     	
 	/**
 	 * Given the /full/path/to/snippet.php, read a description out of the header,
@@ -145,24 +194,74 @@ class Base {
 		if (file_exists($path)) {
 			$info['path'] 		= $path;
 			$info['desc'] 		= '';
-			$info['shortcode'] 	= ''; // e.g. [my_snippet] or [hey]you[/hey]
-			$info['tag']        = ''; // e.g. my_snippet
-			
+			$info['shortcode'] 	= ''; // verbatim e.g. [my_snippet] or [hey]you[/hey]
+//			$info['tag']        = ''; // trimmed e.g. my_snippet
+			$info['params']     = array();
+			$info['errors']     = false; // should be false if syntax is ok.
+			$info['content']    = false;
+
 			$contents = file_get_contents($path);
 			
+			// Legacy:
 			// Get description
 			preg_match('/^Description:(.*)$/m', $contents, $matches);
-			
 			if (isset($matches[1])) {
 				$info['desc'] = $matches[1];
 			}
-
 			// Get shortcode
 			preg_match('/^Shortcode:(.*)$/m', $contents, $matches);
-			
 			if (isset($matches[1])) {
 				$info['shortcode'] = $matches[1];
 			}
+			
+			// Allow the user to skip this in case the environment doesn't support it
+			if (!defined('PHP_SNIPPETS_SKIP_SYNTAX_CHECK')) {
+			     $info['errors'] = self::has_bad_syntax($path);
+			}
+
+            // Docblocks
+            $dox_start = preg_quote('/*','#');
+            $dox_end = preg_quote('*/','#');
+            
+        
+            preg_match("#$dox_start(.*)$dox_end#msU", $contents, $matches);
+        
+            if (!isset($matches[1])) {
+                    return false; // No doc block found!
+            }
+            
+            // Get the docblock                
+            $dox = $matches[1];
+            
+            // Loop over each line in the comment block
+            foreach (preg_split('/((\r?\n)|(\r\n?))/', $dox) as $line) {
+                preg_match('/^\s*\**\s*@description(.*)$/',$line,$m);
+                if (isset($m[1])) {
+                    $info['desc'] = trim(ltrim(trim($m[1]),':'));
+                }
+                preg_match('/^\s*\**\s*@content(.*)$/',$line,$m);
+                if (isset($m[1])) {
+                    $info['content'] = trim(ltrim(trim($m[1]),':'));
+                }
+                preg_match('/^\s*\**\s*@shortcode(.*)$/',$line,$m);
+                if (isset($m[1])) {
+                    $info['shortcode'] = trim(ltrim(trim($m[1]),':'));
+                }
+                preg_match('/^\s*\**\s*@param(.*)$/',$line,$m);
+                if (isset($m[1])) {
+                    $m[1] = trim($m[1]);
+                    strtok($m[1], ' '); // first word: throw-away type
+                    $varname = strtok(' '); // second word: the varname
+                    $varname = ltrim($varname,'$');
+                    // todo: look for a default value
+                    // $param_desc = 
+                    $info['params'][$varname] = '';
+                    preg_match('/\(default:(.*)\)$/i',$m[1],$m2);
+                    if (isset($m2[1])) {
+                        $info['params'][$varname] = trim($m2[1]);   
+                    }
+                }                
+            }
 		}
 		
 		return $info;

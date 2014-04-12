@@ -1,8 +1,8 @@
 <?php
-/*
-Description: Gets the current date. Optionally supply a format
-Shortcode: [current_date]
-*/
+/**
+ * @description Gets the current date. Optionally supply a format
+ * @param string $format (default:Y-m-d H:i:s)
+ */
 if (!isset($format) || empty($format)) {
 	$format = get_option('date_format', 'Y-m-d H:i:s');
 }

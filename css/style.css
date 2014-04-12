@@ -89,3 +89,6 @@ label.php_snippets_label {
 	margin-left: 5px;
 	color: #ae0004;
 }
+span.php_snippets_error {
+    color: red;
+}
