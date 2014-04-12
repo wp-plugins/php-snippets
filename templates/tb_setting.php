@@ -22,6 +22,15 @@
 		font-weight: bold;
 		margin-bottom:5px; 
 	}
+	.snippet_dir span {
+		font-size: 11px;
+		margin-left: 5px;
+	}
+	.snippet_dir_error {
+		border: 1px solid #ae0004;
+		background: #fdbdbd;
+		color: #ae0004;
+	}
 </style>
 <div>
 	<h2><?php print $data['pagetitle']; ?> 

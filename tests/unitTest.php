@@ -48,5 +48,6 @@ class unitTest extends PHPUnit_Framework_TestCase {
     {
     	$info = Phpsnippets\Functions::get_snippet_info(dirname(__FILE__).'\dir1\time_delay.snippet.php');
     	$this->assertTrue( !empty($info), 'Snippet is Valid.');
+
     }
 }

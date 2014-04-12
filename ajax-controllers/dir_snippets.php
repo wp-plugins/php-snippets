@@ -23,37 +23,30 @@ if (!empty(PhpSnippets\Functions::$warnings)) {
 }
 
 foreach ($dirs as $dir => $exist) {
+	$class_dir = $exist ? '' : 'snippet_dir_error';
+	$class_dir_error = $exist ? '' : '<span>:This Directory Doesnt Exist.</span>';
+	$data['content'] .= "<div class='snippet_dir $class_dir'>$dir $class_dir_error</div>";
+
 	if($exist) {
 		$snippets = PhpSnippets\Functions::get_snippets($dir,$ext); 
+		if(!empty($snippets)) {
+			foreach ($snippets as $shortname => $snippet) {
+				$info = PhpSnippets\Functions::get_snippet_info($snippet);
+				
+				if (empty($info['shortcode'])) {
+					$info['shortcode'] = "[$shortname]";
+				}
+				$data['content'] .= sprintf('<li>
+					<strong class="linklike">%s</strong> 
+					: <span class="php_snippets_desc">%s</span></li>'
+					, $shortname
+					, $info['desc']
+				);
+			}
+		}
 	}
 }
-echo '<pre>';
-print_r($snippets);
-die();
-foreach ($snippets as $snippet) {
-	echo '<pre>';
-	print_r($snippet);
-	die();
-	$info = PhpSnippets\Functions::get_snippet_info($snippet);
-	echo '<pre>';
-	print_r($info);
-	die();
-}
-/*
-	$data['content'] .= "<div class='snippet_dir'>$dir</div>";
-	if(!empty($snippets)) {
-		foreach ($snippets as $shortname => $s) {
-			if (empty($d['shortcode'])) {
-				$s['shortcode'] = "[$shortname]";
-			}
-			$data['content'] .= sprintf('<li>
-				<strong class="linklike">%s</strong> 
-				: <span class="php_snippets_desc">%s</span></li>'
-				, $shortname
-				, $s['desc']
-			);
-		}
-	}*/
+
 
 $php_license = PhpSnippets\License::check();
 if($php_license !==  'valid') {

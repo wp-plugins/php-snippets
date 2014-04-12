@@ -106,6 +106,7 @@ class Functions {
 	 * @return array simple array containing fullpaths to files
 	 */
 	public static function get_snippets($dir,$ext) {
+		$snippets = array();
 		$rawfiles = @scandir($dir); 
 		$pattern = '/' . preg_quote($ext) . '$/';
 		unset($rawfiles[0]);
@@ -115,13 +116,15 @@ class Functions {
 			foreach ($rawfiles as $f) {
 				if(!is_dir($dir.'/'.$f)) {
 					if ( preg_match($pattern, $f) && strpos($f, $ext) ) {
-						self::$snippets[] = $dir.'/'.$f;
+						$shortname = basename($f);
+						$shortname = str_replace($ext, '', $shortname);
+						$snippets[$shortname] = $dir.'/'.$f;
 					}			
 				}
 				
 			}
 		}
-		return self::$snippets;
+		return $snippets;
 	}
 
 	/**
