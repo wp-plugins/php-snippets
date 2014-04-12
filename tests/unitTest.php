@@ -20,12 +20,33 @@ require_once dirname(dirname(__FILE__)).'/includes/Functions.php';
  
 class unitTest extends PHPUnit_Framework_TestCase {
 
-    public function testget_snippets() {
-
+	/**
+	 * Test get_snippets function
+	 */
+    public function testGet_snippets() {
         $snippets = Phpsnippets\Functions::get_snippets(dirname(__FILE__).'/dir1', '.snippet.php');
-        $this->assertTrue(count($snippets) == 3 , 'There are 3 .snippet.php files in dir1');
+        $this->assertTrue(count($snippets) == 4 , 'There are 4 .snippet.php files in dir1');
         $snippets = Phpsnippets\Functions::get_snippets(dirname(__FILE__).'/dir1', '.php');
-        $this->assertTrue(count($snippets) == 6 , 'There are 6 .php files in dir1');
+        $this->assertTrue(count($snippets) == 7 , 'There are 7 .php files in dir1');
 
+    }
+
+    /**
+	 * Test get_snippets function
+	 */
+    public function testGet_dirs() {
+    	if ( !defined('ABSPATH') )
+		define('ABSPATH',  dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/');
+        $dirs = Phpsnippets\Functions::get_dirs(array(dirname(__FILE__).'/dir1',dirname(__FILE__).'/dir2','test'),0);
+        $this->assertTrue(count(array_filter($dirs)) == 2 , 'There are 2 Valid dirs');
+    }
+
+    /**
+     * test get_snippet_info
+     */
+    public function testGet_snippet_info() 
+    {
+    	$info = Phpsnippets\Functions::get_snippet_info(dirname(__FILE__).'\dir1\time_delay.snippet.php');
+    	$this->assertTrue( !empty($info), 'Snippet is Valid.');
     }
 }

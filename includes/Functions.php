@@ -108,13 +108,14 @@ class Functions {
 	public static function get_snippets($dir,$ext) {
 		$snippets = array();
 		$rawfiles = @scandir($dir); 
+		$pattern = '/' . preg_quote($ext) . '$/';
 		unset($rawfiles[0]);
 		unset($rawfiles[1]);
 
 		if(!empty($rawfiles)) {
 			foreach ($rawfiles as $f) {
 				if(!is_dir($dir.'/'.$f)) {
-					if ( !preg_match('/^\./', $f) && strpos($f, $ext) ) {
+					if ( preg_match($pattern, $f) && strpos($f, $ext) ) {
 						$snippets[] = $dir.'/'.$f;
 					}			
 				}
@@ -154,13 +155,11 @@ class Functions {
 	 * @param	array	
 	 */
 	public static function get_snippet_info($path) {
-	
-		$info['path'] 		= $path;
-		$info['desc'] 		= '';
-		$info['shortcode'] 	= '';
-		$info['dir']	= dirname($path);
-		
+		$info = array();
 		if (file_exists($path)) {
+			$info['path'] 		= $path;
+			$info['desc'] 		= '';
+			$info['shortcode'] 	= '';
 			$contents = file_get_contents($path);
 			
 			// Get description

@@ -25,7 +25,6 @@ $data['warnings'] = self::get_value($ps_data, 'warnings', array());
 $data['snippet_suffix'] = self::get_value($ps_data, 'snippet_suffix');
 $data['show_builtin_snippets'] = self::get_value($ps_data, 'show_builtin_snippets');
 
-
 //$php_license = PhpSnippets\License::check();
 //PhpSnippets\License::activate_page();
 
