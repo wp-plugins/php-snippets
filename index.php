@@ -50,14 +50,19 @@ function php_snippets_preflight() {
 	}
 }
 
+function php_include_settings_page(){
+    include PHP_SNIPPETS_PATH.'/controllers/settings.php';
+}
+
+function php_snippets_add_admin_menu() {
+    add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 
+        'php-snippets', 'php_include_settings_page');
+}
+
 add_action('admin_notices', 'php_snippets_preflight');
 
 // Add a menu item
-add_action('admin_menu', function(){
-    add_options_page('PHP Snippets', 'PHP Snippets', 'manage_options', 'php-snippets', function(){
-        include PHP_SNIPPETS_PATH.'/controllers/settings.php';
-    });
-});
+add_action('admin_menu', 'php_snippets_add_admin_menu');
 
 // All clear?  Fire the missiles.
 if (empty($php_snippet_errors)) include_once dirname(__FILE__).'/loader.php';
