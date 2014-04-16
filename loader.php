@@ -103,6 +103,7 @@ add_action('init',function(){
 	Phpsnippets\Ajax::$controllers['dir_snippets'] = PHP_SNIPPETS_PATH .'/ajax-controllers/dir_snippets.php';
 	Phpsnippets\Ajax::$controllers['get_snippet_shortcode'] = PHP_SNIPPETS_PATH .'/ajax-controllers/get_snippet_shortcode.php';
 	Phpsnippets\Ajax::$controllers['list_snippets'] = PHP_SNIPPETS_PATH .'/ajax-controllers/list_snippets.php';
+    Phpsnippets\Ajax::$controllers['list_directory'] = PHP_SNIPPETS_PATH .'/ajax-controllers/list_directory.php';
 	foreach (Phpsnippets\Ajax::$controllers as $shortname => $path) {
 		add_action( 'wp_ajax_'.$shortname, 'Phpsnippets\Ajax::'.$shortname);
 	}

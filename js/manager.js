@@ -105,9 +105,38 @@ function settings_snippets(e) {
             W = W - 80;
             H = H - 120;
             // then thickbox the div
-            tb_show('', '#TB_inline?width=' + W + '&height=' + H + '&inlineId=snippets_list' );     
+            tb_show('', '#TB_inline?width=' + W + '&height=' + H + '&inlineId=snippets_list' );  
           }
         );
        e.preventDefault();
 }
 
+/*------------------------------------------------------------------------------
+Show Snippets from phpsnippets setting page
+NOTE: thickbox script and css must be loaded on the plugin or else modal will fail on firefox
+------------------------------------------------------------------------------*/
+function modal_directory(e) {
+	jQuery('body').append('<div id="directory_list" style="display:none;"></div>');
+        var data = {
+          "action" : 'list_directory',
+          "list_directory_nonce" : php_snippets.ajax_nonce
+        };
+
+
+        jQuery.post(
+          php_snippets.ajax_url,
+          data,
+          function( response ) {
+            // Write the response to the div
+            console.log(response);
+            jQuery('#directory_list').html(response);
+
+            var width = jQuery(window).width(), H = jQuery(window).height(), W = ( 720 < width ) ? 720 : width;
+            W = W - 80;
+            H = H - 120;
+            // then thickbox the div
+            tb_show('', '#TB_inline?width=' + W + '&height=' + H + '&inlineId=directory_list' );  
+          }
+        );
+       e.preventDefault();
+}

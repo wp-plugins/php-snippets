@@ -35,7 +35,7 @@ foreach ($dirs as $dir => $exists) {
 		foreach ($snippets as $shortname => $snippet) {
 			$info = PhpSnippets\Base::get_snippet_info($snippet);
 			//print '<pre>'; print_r($info); print '</pre>';
-            $info['shortcode'] = get_shortcode($info,$shortname);
+            $info['shortcode'] = PhpSnippets\Base::get_shortcode($info,$shortname);
 
 			$error_class = '';
 			if ($info['errors']) {

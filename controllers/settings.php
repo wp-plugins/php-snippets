@@ -58,8 +58,10 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
                 unset($snippet_dirs[$i]);
             }
 
-            if (!PhpSnippets\Base::check_permissions($dir)){
+            if (!PhpSnippets\Base::dir_exists($dir)){
+
                 $warns = PhpSnippets\Base::$warnings;
+
             }
         }
 

@@ -1,4 +1,5 @@
-<?php  if(!empty($data['warnings'])) : ?>
+<?php  
+if(!empty($data['warnings'])) : ?>
 	<div id="php-snippets-errors" class="error"><p>Some of the directories you defined do not exist!</p></div>
 <?php endif; ?>
 <form method="post">
@@ -24,8 +25,8 @@
 		<?php endif ?>
 	</div>
 	
-	<button onclick="javascript:add_field_dir(event);"class="button" id="add_dir">Add Directory</button>
-	
+	<!-- <button onclick="javascript:add_field_dir(event);"class="button" id="add_dir">Add Directory</button> -->
+	<a href="#" onclick="modal_directory(event);" id="add_dir" class="button">Add Directory</a>
 	<br/>
 	<br/>		
        <label for="snippet_suffix" class="php_snippets_label">Snippet Suffix</label>
