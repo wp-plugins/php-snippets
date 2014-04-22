@@ -139,6 +139,30 @@ class Base {
 
 		return self::$directories;
 	}
+
+	/**
+	 * Show all Directories on the Add Directory modal
+	 * @param string dir
+	 * @return array of directories
+	 */
+	public static function list_dirs($dir='') {
+		$directories = array();
+		if($dir == '') {
+			return array();
+		}
+
+		$rawfiles = @scandir($dir); 
+		unset($rawfiles[0]);
+
+		foreach ($rawfiles as $f) {
+			// Check immediate sub-dirs
+			if (is_dir($dir.'/'.$f)) { 
+				$directories[] = $f;
+			}
+		}
+
+		return $directories;
+	}
 	
 	/**
 	 *

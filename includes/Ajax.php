@@ -51,7 +51,6 @@ class Ajax {
 	 * @param mixed $args
 	 */
 	public static function __callStatic($name, $args) {
-
 		if (!isset(self::$controllers[$name])) {
 			die(sprintf(__('Invalid Ajax controller: %s', 'php_snippets'), "<em>$name</em>"));
 		}

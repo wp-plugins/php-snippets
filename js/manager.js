@@ -119,8 +119,11 @@ function modal_directory(e) {
 	jQuery('body').append('<div id="directory_list" style="display:none;"></div>');
         var data = {
           "action" : 'list_directory',
-          "list_directory_nonce" : php_snippets.ajax_nonce
+          "list_directory_nonce" : php_snippets.ajax_nonce,
+          "dir_test"	: 'test/testing'
         };
+
+        
 
 
         jQuery.post(
@@ -128,7 +131,7 @@ function modal_directory(e) {
           data,
           function( response ) {
             // Write the response to the div
-            console.log(response);
+            console.log(data);
             jQuery('#directory_list').html(response);
 
             var width = jQuery(window).width(), H = jQuery(window).height(), W = ( 720 < width ) ? 720 : width;
