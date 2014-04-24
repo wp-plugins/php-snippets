@@ -119,19 +119,13 @@ function modal_directory(e) {
 	jQuery('body').append('<div id="directory_list" style="display:none;"></div>');
         var data = {
           "action" : 'list_directory',
-          "list_directory_nonce" : php_snippets.ajax_nonce,
-          "dir_test"	: 'test/testing'
+          "list_directory_nonce" : php_snippets.ajax_nonce
         };
-
-        
-
 
         jQuery.post(
           php_snippets.ajax_url,
           data,
           function( response ) {
-            // Write the response to the div
-            console.log(data);
             jQuery('#directory_list').html(response);
 
             var width = jQuery(window).width(), H = jQuery(window).height(), W = ( 720 < width ) ? 720 : width;
@@ -143,3 +137,36 @@ function modal_directory(e) {
         );
        e.preventDefault();
 }
+
+/*------------------------------------------------------------------------------
+Show Snippets from phpsnippets setting page
+NOTE: thickbox script and css must be loaded on the plugin or else modal will fail on firefox
+------------------------------------------------------------------------------*/
+jQuery(document).on('click','.refresh_dir', function(){
+    var parent_dir = jQuery(this).data('parent_dir');
+    var data = {
+      "action" : 'list_directory',
+      "list_directory_nonce" : php_snippets.ajax_nonce,
+      'parent_dir' : parent_dir
+    };
+    jQuery.post(
+      php_snippets.ajax_url,
+      data,
+      function( response ) {
+        jQuery('#dir_modal_list').html(jQuery('.dir_modal_content',response));
+      }
+    );
+    event.preventDefault();
+});
+
+
+/*------------------------------------------------------------------------------
+Show Snippets from phpsnippets setting page
+NOTE: thickbox script and css must be loaded on the plugin or else modal will fail on firefox
+------------------------------------------------------------------------------*/
+jQuery(document).on('click','.select_dir', function(){
+	var selected = jQuery(this).data('sel_dir');
+    tb_remove();
+    jQuery( "#dir_wrap" ).append( "<div class='dir_item'><input type='text' class='snippet_dir' name='snippet_dirs[]' size='100' value='"+selected+"'/><span class='rm_dir'>x<span></div>" );
+    event.preventDefault();
+});

@@ -153,14 +153,15 @@ class Base {
 
 		$rawfiles = @scandir($dir); 
 		unset($rawfiles[0]);
-
-		foreach ($rawfiles as $f) {
-			// Check immediate sub-dirs
-			if (is_dir($dir.'/'.$f)) { 
-				$directories[] = $f;
+		if(!empty($rawfiles)) {
+			foreach ($rawfiles as $f) {
+				// Check immediate sub-dirs
+				if (is_dir($dir.'/'.$f)) { 
+					$directories[] =$dir .'/'. $f;
+				}
 			}
 		}
-
+		
 		return $directories;
 	}
 	
