@@ -112,7 +112,7 @@ function settings_snippets(e) {
 }
 
 /*------------------------------------------------------------------------------
-Show Snippets from phpsnippets setting page
+Open a modal with directory list, default to wp root path
 NOTE: thickbox script and css must be loaded on the plugin or else modal will fail on firefox
 ------------------------------------------------------------------------------*/
 function modal_directory(e) {
@@ -139,7 +139,7 @@ function modal_directory(e) {
 }
 
 /*------------------------------------------------------------------------------
-Show Snippets from phpsnippets setting page
+Refresh the content of the Thickbox, upong clicking a directory
 NOTE: thickbox script and css must be loaded on the plugin or else modal will fail on firefox
 ------------------------------------------------------------------------------*/
 jQuery(document).on('click','.refresh_dir', function(){
@@ -161,8 +161,8 @@ jQuery(document).on('click','.refresh_dir', function(){
 
 
 /*------------------------------------------------------------------------------
-Show Snippets from phpsnippets setting page
-NOTE: thickbox script and css must be loaded on the plugin or else modal will fail on firefox
+Add a new Field element on the Settign Page and use the selected Directory 
+as the field value
 ------------------------------------------------------------------------------*/
 jQuery(document).on('click','.select_dir', function(){
 	var selected = jQuery(this).data('sel_dir');
