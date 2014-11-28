@@ -5,7 +5,7 @@ Plugin Name: PHP Snippets
 Plugin URI: http://code.google.com/p/wordpress-php-snippets/
 Description: Publishes shortcodes for each PHP file contained in specified directory(ies).
 Author: Everett Griffiths
-Version: 0.9
+Version: 1.0
 Author URI: http://craftsmancoding.com/
 
 The plugin loading is split between index.php and loader.php so we can gracefully handle cases where the user is not
