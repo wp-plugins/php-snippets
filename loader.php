@@ -109,6 +109,6 @@ add_action('init',function(){
 	}
 });
 
-add_action('widgets_init', 'PhpSnippets\Widget::register_this_widget');
+add_action('widgets_init', 'PhpSnippets\\Widget::register_this_widget');
 
 /*EOF*/

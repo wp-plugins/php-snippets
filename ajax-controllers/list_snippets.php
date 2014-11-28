@@ -32,14 +32,14 @@ if (!empty(PhpSnippets\Base::$warnings)) {
 foreach ($dirs as $dir => $exists) {
 
 	if($exists) {
-		$snippets = PhpSnippets\Base::get_snippets($dir,$ext); 
+		$snippets = PhpSnippets\Base::get_snippets($dir,$ext);
 		if(!empty($snippets)) {
 			foreach ($snippets as $shortname => $snippet) {
 				$info = PhpSnippets\Base::get_snippet_info($snippet);
 				
 				$shortcode = PhpSnippets\Base::get_shortcode($info,$shortname);
 				$data['content'] .= sprintf("<li>
-    				<strong class='linklike' onclick='javascript:insert_shortcode(\"%s\");'>%s</strong> 
+    				<strong class='linklike' onclick='javascript:insert_shortcode(\"%s\");'>%s</strong>
 					: <span class='php_snippets_desc'>%s</span></li>"
 					, htmlspecialchars(addslashes($shortcode))
 					, $shortname

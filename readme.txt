@@ -3,7 +3,7 @@ Contributors: fireproofsocks
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WPR4A9JT355BE
 Tags: php, exec, snippet, code
 Requires at least: 3.0
-Tested up to: 3.5.2
+Tested up to: 4.0.1
 Stable tag: 0.9
 
 Provides an interface for developers to easily add PHP code to posts and widgets via selectable shortcodes.
@@ -28,23 +28,44 @@ You can install this plugin in the standard way from the WordPress plugin admin 
 
 1. Upload the `php-snippets` directory to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
+1. Get a License Key from http://craftsmancoding.com/products/downloads/php-snippets/ (enter your name and email to complete checkout)
+1. Enter the License Key in your PHP Settings page ( /wp-admin/options-general.php?page=php-snippets )
+1. Define one or more Snippet directories where you will save your custom PHP Snippets, e.g. [+ABSPATH+]/snippets/
+
+== Usage ==
+
 1. Create a new post or page
-1. Notice the new `<?php` button in the TinyMCE toolbar -- click it to get a list of available PHP Snippets, then select the one you want to insert it into your post.
-1. Optionally, configure your custom snippet directory under the Settings --> PHP Snippets directory and put in the /full/path/to/your/directory
+1. Click the `<?php` button in the TinyMCE toolbar to see a list of available PHP Snippets
+1. Select the Snippet you want to insert into your post: a shortcode should be generated inside your post content.
+
+Optionally, you can manually type in the shortcode and add in any variables you have defined.
+
+== Widget ==
+
+You can add your snippet output to any Widget by using the PHP Widget.
+
+1. In the WP dashboard, navigate to Appearance --> Widgets
+1. Drag the PHP Widget from the list of available widgets to any valid widget area on the right.
+1. Add a title for your widget
+1. Select one of your PHP Snippets
+1. Adjust the shortcode as desired (e.g. to add in special parameters)
+1. Save the widget instance.
+
 
 == Frequently Asked Questions ==
 
 = My Snippets are not showing up!=
 
-Make sure your files use the `.snippet.php` extension and that you have correctly configured your PHP Snippets directory under *Settings --> PHP Snippets*.  The directory has to be a *full* path, e.g. `/home/myuser/public_html/snippets`  
+Make sure your files use the correct extension.  If you have configured the plugin to look for `.snippet.php` files, then any `.php` files will not be selectable as PHP Snippets.
 
-Only `*.snippet.php` files inside your PHP Snippet directory _OR_ inside of an immediate subfolder will be selectable.  Deeper hierarchies are not supported.
+Make sure you have correctly configured your PHP Snippets directory under *Settings --> PHP Snippets*.  The directory has to be a *full* path, e.g. `/home/myuser/public_html/snippets` or you can use the `[+ABSPATH+]` placeholder to point to the web root of your site, e.g. `[+ABSPATH+]mysnippets`
 
-The reason that only `*.snippet.php` files are listed is because some scripts may involve multiple PHP files: by giving only one file the `*.snippet.php` extension, you can control which file is the "main" file.
 
 = What information needs to be in the Snippet header? =
 
-Your Snippets should include an information header in the same way that WordPress plugins and themes, but it's much simplified.  Include a *Description:* and a *Shortcode:* to indicate a description and a sample shortcode, respectively.
+As of version 0.9, the information header is optional.  Using it, however, can enhance the user experience because it lets users know what your Snippet does and you can customize the inputs.
+
+Your Snippets should include an information header in the same way that WordPress plugins and themes, but it's simplified.  Include a *Description:* and a *Shortcode:* to indicate a description and a sample shortcode, respectively.
 
 `
 /*
@@ -54,9 +75,14 @@ Shortcode: [link id=123]Click here[/link]
 
 Look at the examples in the `php-snippets/snippets` directory for some examples.
 
-= What inputs does my Snippet get? =
+= What inputs does my Snippet accept? =
 
-Anything you pass in your shortcode will be passed to your Snippet. E.g. `[mySnippet x="123" y="Llama"]` will make the variables `$x` and `$y` available in your Snippet (they would contain "123" and "Llama", respectively). The `$content` variable is reserved for when you use a _full_ tag, e.g. `[mySnippet]My content goes here[/mySnippet] would make `$content` contain the text "My content goes here".
+Anything you pass in your shortcode will be passed to your Snippet. E.g. `[mySnippet x="123" y="Llama"]` will make the variables `$x` and `$y` available in your Snippet (they would contain "123" and "Llama", respectively).
+
+The `$content` variable is reserved for when you use a _full_ tag, e.g. `[mySnippet]My content goes here[/mySnippet] would make `$content` contain the text "My content goes here".
+
+Warning: WordPress allows *only* lowercase parameter names, so your input variables should be lowercase.
+
 
 = What should my Snippet output? =
 
@@ -67,7 +93,7 @@ Technically speaking, your code doesn't _have_ to output anything -- some script
 
 = There's a Bug in the Plugin! =
 
-Check to make sure the bug is actually in the plugin and not in one of your Snippets.  This plugin acts mostly as a pass-through, and the error messages should be confined to your code (hopefully not mine).  If there's something goofy going on, please let me know by filing a [bug report](http://code.google.com/p/wordpress-php-snippets/issues/list).
+Check to make sure the bug is actually in the plugin and not in one of your Snippets.  This plugin attempts to act primarily as a transparent pass-through, and the error messages should be confined to *your* code (hopefully not mine).  If there's something goofy going on, please let me know by filing a [bug report](http://code.google.com/p/wordpress-php-snippets/issues/list).
 
 
 == Screenshots ==
@@ -83,6 +109,7 @@ Check to make sure the bug is actually in the plugin and not in one of your Snip
 * PHP 5.3.0 is now required.
 * Configurable suffix, so now your snippets need not use the '.snippet.php' extension.
 * Pay-what-you-like licensing added. 
+* Various bug fixes and improvements
 
 = 0.8 =
 

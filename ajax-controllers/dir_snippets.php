@@ -30,7 +30,8 @@ foreach ($dirs as $dir => $exists) {
 
 	if(!$exists) continue;
 	
-	$snippets = PhpSnippets\Base::get_snippets($dir,$ext); 
+	$snippets = PhpSnippets\Base::get_snippets($dir,$ext);
+
 	if(!empty($snippets)) {
 		foreach ($snippets as $shortname => $snippet) {
 			$info = PhpSnippets\Base::get_snippet_info($snippet);

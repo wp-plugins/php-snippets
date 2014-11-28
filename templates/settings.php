@@ -9,7 +9,7 @@ if(!empty($data['warnings'])) : ?>
 	<?php //print htmlentities($data['snippet_dir']); ?>
 	<label for="snippet_dir" class="php_snippets_label">Snippet Directory</label>
 	<div class="php_snippets_description">
-	   <p>Choose one or more directories that contain your PHP Snippets. These should be full paths, not URLs, e.g. <code>/home/html/wp-content/snippets</code> (omit the trailing slash).  Use PHP's <code>getcwd()</code> or the Linux <code>pwd</code> command to get the full path to the directory.  You may use the <code>[+ABSPATH+]</code> placeholder to get a calculated path to your site root, otherwise be sure to update this setting if you move your site!</p>
+	   <p>Choose one or more directories that contain your PHP Snippets. These should be full paths, not URLs, e.g. <code>/home/html/wp-content/snippets</code> (omit the trailing slash).  Use PHP's <code>getcwd()</code> or the Linux <code>pwd</code> command to get the full path to the directory.  You may use the <code>[+ABSPATH+]</code> placeholder to get a calculated path to your site root, e.g. <code>[+ABSPATH+]mysnippets</code>. If you use absolute paths instead of the placeholder be sure to update this setting if you move your site!</p>
 	</div>
 	<div id="dir_wrap">
 		<?php if(!empty($data['snippet_dirs'])) : ?>

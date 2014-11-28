@@ -3,10 +3,13 @@ if (!defined('WP_PLUGIN_DIR')) exit('No direct script access allowed');
 /*
 Plugin Name: PHP Snippets
 Plugin URI: http://code.google.com/p/wordpress-php-snippets/
-Description: Publishes shortcodes for each PHP file contained in a specified directory.
+Description: Publishes shortcodes for each PHP file contained in specified directory(ies).
 Author: Everett Griffiths
 Version: 0.9
 Author URI: http://craftsmancoding.com/
+
+The plugin loading is split between index.php and loader.php so we can gracefully handle cases where the user is not
+running at least PHP 5.3.
 */
 define('PHP_SNIPPETS_PATH', dirname(__FILE__) );
 define('PHP_SNIPPETS_URL', WP_PLUGIN_URL .'/'. basename( PHP_SNIPPETS_PATH ) );

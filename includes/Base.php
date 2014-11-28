@@ -43,7 +43,7 @@ class Base {
     /**
      * Register the shortcode using WP's add_shortcode function
      *
-     * @param string $fulllpath /full/path/to/file.php
+     * @param string $fullpath /full/path/to/file.php
      * @param string $ext file extension. This is stripped to calculate the shortcode
      * @return void
      */
@@ -74,13 +74,14 @@ class Base {
 	/**
 	 * Verify a given directory
 	 *
-	 * @param	string	full path to directory to check.
+	 * @param	string	$dir full path to directory to check.
 	 * @return	boolean	true on success
 	 */
 	public static function dir_exists($dir) {
 			if(trim($dir) == '') {
 				return;
 			}
+
 			$dir = self::parse($dir,self::$placeholders);
 			if (!file_exists($dir)) {
 				return false;
@@ -109,9 +110,8 @@ class Base {
 			foreach ($rawfiles as $f) {
 				if(!is_dir($dir.'/'.$f)) {
 					if ( preg_match($pattern, $f) && strpos($f, $ext) ) {
-						$shortname = basename($f);
-						$shortname = str_replace($ext, '', $shortname);
-						$snippets[$shortname] = $dir.'/'.$f;
+						$shortname = self::get_shortname($f,$ext);
+						$snippets[$shortname] = rtrim($dir,'/').'/'.$f;
 					}			
 				}
 				
@@ -133,6 +133,7 @@ class Base {
 		}
 		if(!empty($dirs)) {
 			foreach($dirs as $dir){
+				$dir = self::parse($dir, self::$placeholders); // resolve ABSPATH
 				self::$directories[$dir] = self::dir_exists($dir) ;
 			}
 		}
@@ -173,19 +174,23 @@ class Base {
         self::$placeholders[$key] = $value;
     }
 
-    /**
-     * Given a snippet's info and its shortname, generate a shortcode to be pasted
-     * into the text editor.
-     *
-     * @param array $info
-     * @param string $shortname
-     * return string
-     */
+	/**
+	 * Given a snippet's info and its shortname, generate a shortcode to be pasted
+	 * into the text editor.
+	 *
+	 * @param array  $info
+	 * @param string $shortname
+	 * return string
+	 *
+	 * @return string
+	 */
     public static function get_shortcode($info,$shortname) {
+
         // @shortcode defined verbatim
         if(isset($info['shortcode']) && !empty($info['shortcode'])) {
             return $info['shortcode'];
         }
+
         // no parameters to help us out
         if (!isset($info['params']) || empty($info['params'])) {
             if (isset($info['content'])) {
@@ -193,6 +198,7 @@ class Base {
             }
             return "[$shortname]";
         };
+
         // Dynamic shortcode calculation
         $shortcode = '['.$shortname;
         foreach($info['params'] as $varname => $value) {
@@ -206,13 +212,15 @@ class Base {
         
         
     }
-    	
+
 	/**
 	 * Given the /full/path/to/snippet.php, read a description out of the header,
 	 * and read a sample shortcode.
 	 *
-	 * @param	string	$path to file
-	 * @param	array	
+	 * @param    string $path to file
+	 * @param           array
+	 *
+	 * @return array
 	 */
 	public static function get_snippet_info($path) {
 		$info = array();
@@ -292,19 +300,21 @@ class Base {
 		return $info;
 	}
 
-    /**
-     * E.g. convert '/path/to/something.snippet.php' to 'something'
-     * This is the tag by which we can identify the snippet.
-     * @param string full path to file
-     * @param string extension
-     */
+	/**
+	 * E.g. convert '/path/to/something.snippet.php' to 'something'
+	 * This is the tag by which we can identify the snippet.
+	 *
+	 * @param string full path to file
+	 * @param string extension
+	 *
+	 * @return mixed|string
+	 */
     public static function get_shortname($file,$ext) {
         $file = basename($file);
-        $file = preg_replace('/'.preg_quote($ext).'$/i','',$file);
-        return $file;
+		$x = strpos($file,'.'); // to the first dot
+		return substr($file,0,$x);
     }
 
-	//------------------------------------------------------------------------------
 	/**
 	 * Designed to safely retrieve scalar elements out of a hash. Don't use this
 	 * if you have a more deeply nested object (e.g. an array of arrays).
@@ -329,7 +339,6 @@ class Base {
 		}
 	}
 
-	//------------------------------------------------------------------------------
 	/**
 	 * Load up a PHP file into a string via an include statement. MVC type usage here.
 	 *
@@ -349,7 +358,7 @@ class Base {
 		die('View file does not exist: ' .$path.$filename);
 	}
 
-	//------------------------------------------------------------------------------
+
 	/**
 	 * @param	string	$msg	 the localized error message.
 	 */
@@ -357,12 +366,15 @@ class Base {
 		self::$warnings[$msg] = 1; // ensure warnings are not duplicated
 	}
 
-    //------------------------------------------------------------------------------
-    /**
-     * Parse a string with replacements
-     * @param stirng $dirname
-     * @return string $dirname
-     */
+
+	/**
+	 * Parse a string with replacements
+	 *
+	 * @param $str
+	 * @param $placeholders
+	 *
+	 * @return string $dirname
+	 */
 	public static function parse($str,$placeholders) {
         foreach ($placeholders as $k => $v) {
             $str = str_replace('[+'.$k.'+]', $v, $str);

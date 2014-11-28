@@ -20,40 +20,51 @@ class Widget extends \WP_Widget {
 			'classname' => __CLASS__,
 			'description' => $this->description,
 		);
-		
-		parent::__construct(__CLASS__, $this->name, $widget_options, $this->control_options);
+
+		// Insanity: WP has slowly allowed for compatibility with namespaces here...
+		parent::__construct('phpsnippets_widget', $this->name, $widget_options, $this->control_options);
+		//parent::__construct( 'baseID', 'name' );
+
+//		parent::__construct(__CLASS__, $this->name, $widget_options, $this->control_options);
+		//parent::__construct('PhpSnippets\\Widget', $this->name, $widget_options, $this->control_options);
 	}
 
     /**
+	 * OLD: this used to be necessary because WP didn't handle namespaces correctly.
      * Generates a unique id for a field instance (because there may be many widgets).
      * Make corrections: WP doesn't expect a classname with a backslash (namespace)
      * jQuery isn't able to target a field id if the identifier has invalid characters.
      */
-    public function get_field_id($id) {
-        $id = parent::get_field_id($id);
-        return str_replace('\\', '_', $id);
-    }
-    public function get_field_name($name) {
-        $name = parent::get_field_id($name);
-        return str_replace('\\', '_', $name);
-    }
+//    public function get_field_id($id) {
+//        $id = parent::get_field_id($id);
+//        return str_replace('\\', '_', $id);
+//    }
+//    public function get_field_name($name) {
+//        $name = parent::get_field_id($name);
+//        return str_replace('\\', '_', $name);
+//    }
+//
     
-    
-	//------------------------------------------------------------------------------
 	/**
 	 * Create only form elements.
 	 */
 	public function form($instance) {
 
-		$snippet_options = '<option></option>';
+		$snippet_options = '<option></option>'; // empty first value
 		foreach (self::$dirs as $d => $exists) {
             $snippets = (array) Base::get_snippets($d,self::$ext);
     		foreach ($snippets as $s) {
-    			$snippet_options .= sprintf('<option value="%s">%s</option>',$s,Base::get_shortname($s,self::$ext));
+				if (isset($instance['snippet']) && $instance['snippet'] == $s)
+				{
+					$snippet_options .= sprintf('<option value="%s" selected="selected">%s</option>',
+						$s,Base::get_shortname($s,self::$ext));
+				}
+				else
+				{
+					$snippet_options .= sprintf('<option value="%s">%s</option>',$s,Base::get_shortname($s,self::$ext));
+				}
     		}
 		}
-		
-		$args_str = ''; // formatted args for the user to look at so they remember what they searched for.
 		
 		if (!isset($instance['title'])) {
 			$instance['title'] = ''; 	// default value
@@ -83,13 +94,13 @@ class Widget extends \WP_Widget {
 			<textarea name="'.$this->get_field_name('content').'" id="'.$this->get_field_id('content').'" rows="3" cols="30">'.$instance['content'].'</textarea>
 			';
 	}
-	
-	//------------------------------------------------------------------------------
+
 	/**
 	 * This generates the widget content on the front-end. 
 	 */
-	function widget($args, $instance) {
-	
+	public function widget($args, $instance) {
+		//error_log('xyzzy');
+		//print '<h2>xyzzy</h2>'; exit;
 /*
 		if (!isset($instance['content']) || empty($instance['content'])) {
 			return; // don't do anything unless we got some content
@@ -106,10 +117,11 @@ class Widget extends \WP_Widget {
 		print $output;
 	}
 
-	//------------------------------------------------------------------------------
 	//! Static
 	public static function register_this_widget() {
+		//print __CLASS__; exit;
         register_widget(__CLASS__);
+        //register_widget('PhpSnippets\\Widget');
 	}
 	
 	public static function setDirs($dirs) {

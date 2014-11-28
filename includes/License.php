@@ -63,7 +63,7 @@ class License {
      */
 	public static function get_error_msg() {
 	   return '<div id="php-warning" class="error">
-                <p><strong>PHP Snippets is almost ready.</strong> You must <a href="options-general.php?page=php-snippets">Enter a License Key</a> for it to work.</p>
+                <p><strong>PHP Snippets is almost ready.</strong> You must <a href="options-general.php?page=php-snippets">Enter a License Key</a> for it to work.  <a href="'.self::$product_url.'" target="_blank">Get a License Key here.</a></p>
             </div>';
 	}
 
@@ -88,8 +88,11 @@ class License {
 	}
 
 	/**
-	 * activate the license
+	 * activate the license, return true on success
+	 *
 	 * @param string $license key
+	 *
+	 * @return bool
 	 */
 	public static function activate($license) {
         $license = trim($license);
