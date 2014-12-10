@@ -116,25 +116,10 @@ Open a modal with directory list, default to wp root path
 NOTE: thickbox script and css must be loaded on the plugin or else modal will fail on firefox
 ------------------------------------------------------------------------------*/
 function modal_directory(e) {
-	jQuery('body').append('<div id="directory_list" style="display:none;"></div>');
-        var data = {
-          "action" : 'list_directory',
-          "list_directory_nonce" : php_snippets.ajax_nonce
-        };
-
-        jQuery.post(
-          php_snippets.ajax_url,
-          data,
-          function( response ) {
-            jQuery('#directory_list').html(response);
-
-            var width = jQuery(window).width(), H = jQuery(window).height(), W = ( 720 < width ) ? 720 : width;
-            W = W - 80;
-            H = H - 120;
-            // then thickbox the div
-            tb_show('', '#TB_inline?width=' + W + '&height=' + H + '&inlineId=directory_list' );  
-          }
-        );
+var content = '<div class="dir_item ">'+
+          '<input type="text" name="snippet_dirs[]" class="snippet_dir" size="100" value=""><span class="rm_dir">x</span>'+
+                  '</div>';
+                  jQuery('#dir_wrap').append(content);
        e.preventDefault();
 }
 
