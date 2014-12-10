@@ -14,6 +14,7 @@ require_once PHP_SNIPPETS_PATH . '/includes/Base.php';
 require_once PHP_SNIPPETS_PATH . '/includes/License.php';
 
 $php_license = PhpSnippets\License::check();
+$php_snippets_data = get_option( 'php_snippets' );
 
 // Check the license, show an error
 add_action('admin_notices', function(){
@@ -30,11 +31,15 @@ require_once PHP_SNIPPETS_PATH . '/includes/Snippet.php';
 require_once PHP_SNIPPETS_PATH . '/includes/Ajax.php';
 require_once PHP_SNIPPETS_PATH . '/includes/Widget.php';
 
-add_filter('mce_external_plugins', function($plugin_array) {
-    $url = PHP_SNIPPETS_URL.'/js/editor_plugin.js';
-    $plugin_array['php_snippets'] = $url;
-    return $plugin_array;
-});
+
+if($php_snippets_data['show_tmce_button'] == 1) {
+     add_filter('mce_external_plugins', function($plugin_array) {
+        $url = PHP_SNIPPETS_URL.'/js/editor_plugin.js';
+        $plugin_array['php_snippets'] = $url;
+        return $plugin_array;
+    });   
+}
+
 
 add_filter('mce_buttons', function($buttons) {
     array_push($buttons, '|', 'php_snippets');

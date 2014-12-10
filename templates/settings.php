@@ -39,6 +39,12 @@ if(!empty($data['warnings'])) : ?>
 	<input type="hidden" name="show_builtin_snippets" value="0" />
 	<input type="checkbox" id="show_builtin_snippets" name="show_builtin_snippets" value="1" <?php print ($data['show_builtin_snippets'] == 1) ? 'checked' : ''; ?>/>
 	<label for="show_builtin_snippets">Show Built-in Snippets</label><br><br>
+
+	<input type="hidden" name="show_tmce_button" value="0" />
+	<input type="checkbox" id="show_tmce_button" name="show_tmce_button" value="1" <?php print ($data['show_tmce_button'] == 1) ? 'checked' : ''; ?>/>
+	<label for="show_tmce_button">Show TinyMCE Button</label><br><br>
+
+
 	<a href="#" onclick="settings_snippets(event);" id="show_all_snippets" class="button">Show all Snippets</a>
 	
 	<br><br>

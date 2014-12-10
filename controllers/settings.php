@@ -24,6 +24,7 @@ $data['snippet_dirs'] = Phpsnippets\Base::get_value($ps_data, 'snippet_dirs', ar
 $data['warnings'] = Phpsnippets\Base::get_value($ps_data, 'warnings', array());
 $data['snippet_suffix'] = Phpsnippets\Base::get_value($ps_data, 'snippet_suffix');
 $data['show_builtin_snippets'] = Phpsnippets\Base::get_value($ps_data, 'show_builtin_snippets');
+$data['show_tmce_button'] = Phpsnippets\Base::get_value($ps_data, 'show_tmce_button');
 
 // Save if submitted...
 if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_name']) ) {
@@ -51,6 +52,7 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
     	$snippet_dirs = Phpsnippets\Base::get_value($_POST, 'snippet_dirs',array());
     	$snippet_suffix = Phpsnippets\Base::get_value($_POST, 'snippet_suffix');
         $show_builtin_snippets = Phpsnippets\Base::get_value($_POST, 'show_builtin_snippets');
+        $show_tmce_button = Phpsnippets\Base::get_value($_POST, 'show_tmce_button');
     	$snippet_suffix = !empty($snippet_suffix) ? trim(strip_tags($snippet_suffix)) : '.snippet.php';
         foreach ($snippet_dirs as $i => $dir) {
             // remove empty val
@@ -70,12 +72,14 @@ if ( !empty($_POST) && check_admin_referer($data['action_name'], $data['nonce_na
         $ps_data['snippet_dirs'] = $snippet_dirs;
         $ps_data['snippet_suffix'] = $snippet_suffix;
         $ps_data['show_builtin_snippets'] = $show_builtin_snippets;
+        $ps_data['show_tmce_button'] = $show_tmce_button;
         
         update_option(Phpsnippets\Base::db_key, $ps_data);
         $data['snippet_dirs'] = $snippet_dirs;
         $data['warnings'] = $warns;
         $data['snippet_suffix'] = $snippet_suffix;
         $data['show_builtin_snippets'] = $show_builtin_snippets;
+        $data['show_tmce_button'] = $show_tmce_button;
     }
 }
 
