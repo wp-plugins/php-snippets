@@ -46,6 +46,25 @@ add_filter('mce_buttons', function($buttons) {
     return $buttons;
 }, 0);
 
+
+// Add buttons to html editor
+add_action('admin_print_footer_scripts','ps_quicktags');
+function ps_quicktags() { ?>
+ <script type="text/javascript" charset="utf-8">
+            if (typeof QTags != 'undefined') {
+                function ps_php_snippets() {
+                    show_php_snippets();
+                }
+                QTags.addButton('php_snippets_id', 'PHP Snippets', ps_php_snippets);
+            }
+        </script>
+<?php
+}
+
+
+
+
+
 // Main functionality here:
 add_action('init',function(){
 	if (is_admin()) {		

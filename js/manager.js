@@ -155,3 +155,8 @@ jQuery(document).on('click','.select_dir', function(){
     jQuery( "#dir_wrap" ).append( "<div class='dir_item'><input type='text' class='snippet_dir' name='snippet_dirs[]' size='100' value='"+selected+"'/><span class='rm_dir'>x<span></div>" );
     event.preventDefault();
 });
+
+jQuery('#qt_content_PHPSnippets').on('click',function() {
+  console.log('php snippets modal');
+  event.preventDefault();
+})
