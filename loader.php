@@ -33,6 +33,7 @@ require_once PHP_SNIPPETS_PATH . '/includes/Widget.php';
 
 
 if($php_snippets_data['show_tmce_button'] == 1) {
+
      add_filter('mce_external_plugins', function($plugin_array) {
         $url = PHP_SNIPPETS_URL.'/js/editor_plugin.js';
         $plugin_array['php_snippets'] = $url;

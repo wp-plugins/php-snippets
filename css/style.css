@@ -101,3 +101,10 @@ span.php_snippets_error {
 	font-weight: bold;
 	margin-bottom:5px; 
 }
+
+.mce-i-php-snippets-icon {
+	background-image: url('../images/php-snippet-small.png') !important;
+	border: none !important;
+	background-size: 23px !important;
+	background-repeat: no-repeat !important;
+}

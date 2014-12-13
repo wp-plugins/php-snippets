@@ -4,6 +4,7 @@
 
         init : function(ed, url){
             ed.addButton('php_snippets', {
+                icon: 'php-snippets-icon',
                 title : 'Insert PHP snippet',
                 onclick : function() {
                     ed.execCommand(
@@ -11,8 +12,7 @@
                         false,
                         show_php_snippets() // <-- you must create this JS function!
                         );
-                },
-                image: url + "/../images/php-snippet-small.png"
+                }
             });
         },
 
