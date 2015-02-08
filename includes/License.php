@@ -1,17 +1,20 @@
 <?php
 /**
- * Check license  
+ * Check license
+ * in version 1.1, there is an effort to fail more gracefully if the remote server is having trouble or there
+ * are troubles with SSL negotiation.
  */
 namespace PhpSnippets;
 
 class License {
 
-	public static $store_url = 'http://craftsmancoding.com/products/'; // store_url
-	public static $product_url = 'http://craftsmancoding.com/products/downloads/php-snippets/'; 
+	public static $store_url = 'https://craftsmancoding.com/products/'; // store_url
+	public static $product_url = 'https://craftsmancoding.com/products/downloads/php-snippets/';
 	public static $plugin = 'PHP Snippets'; // item name from store
     public static $key_option_name = 'php_snippets_license_key';
-    public static $status_option_name = 'php_snippets_license_status';
-    
+    public static $status_option_name = 'php_snippets_license_status'; // e.g. valid
+    public static $license_check_frequency_in_days = 7;
+
     public static function get_status() {
         return get_option(self::$status_option_name);
     }
@@ -77,7 +80,7 @@ class License {
 
 
 	/**
-	 * Handles 
+	 * Handles if/when a user changes their license key
 	 */
 	public static function sanitize( $new ) {
 		$old = get_option(self::$key_option_name);
@@ -90,105 +93,143 @@ class License {
 	/**
 	 * activate the license, return true on success
 	 *
-	 * @param string $license key
+	 * @param string $license_key
 	 *
-	 * @return bool
+	 * @return bool if activation succeeded or false if it failed
 	 */
-	public static function activate($license) {
-        $license = trim($license);
+	public static function activate($license_key) {
 
+        $license_key = trim($license_key);
 
-        update_option(self::$key_option_name, $license);
-        
-		// data to send in our API request
-		$api_params = array( 
-			'edd_action'=> 'activate_license', 
-			'license' 	=> $license, 
-			'item_name' => urlencode( self::$plugin ), // the name of our product in EDD,
-			'url'       => home_url(),
-			'rand' => uniqid().md5(home_url()) // cache-busting
-		);
-	
-		// Call the custom API.
-		$endpoint = add_query_arg( $api_params, self::$store_url );
-		$response = wp_remote_get($endpoint);
+		// ~ add_option / set_option
+        update_option(self::$key_option_name, $license_key);
 
-		// make sure the response came back okay
-		if (empty($response) || is_wp_error($response)) return false;
- 		
-		// decode the license data
-		$license_data = json_decode(wp_remote_retrieve_body($response));
-		
+		if ($response = self::remote_check_license($license_key,'activate_license'))
+		{
+			// We append the license key to the response to store it for comparison later
+			$response->key = $license_key;
+			set_transient( $cache_key, $response, 60*60*24*self::$license_check_frequency_in_days );
+			$status = $response->license; // *facepalm* -- status (e.g. "valid") is stored in the 'license' key.
+			update_option(self::$status_option_name, $status);
 
-		if (empty($license_data) || !is_object($license_data)) return false;
-
-		update_option(self::$status_option_name, $license_data->license);
-
-		if($license_data->success) {
+			if($response->success) {
+				return true; // <-- legit activation here
+			}
+		}
+		// Remote request failed!
+		// We will assume it's good and check again tomorrow
+		else
+		{
+			$response = new \stdClass();
+			$response->key = $license_key;
+			set_transient( $cache_key, $response, 60*60*24*1 );
 			return true;
 		}
+
 		return false;
 	}
 
 	/**
-	* Check that the license is valid.
-	* cache the result using set_transient
-	**/
+	 * Check that the license is valid.
+	 * cache the result using set_transient
+	 *
+	 * @return string status e.g. 'valid'
+	 */
 	public static function check() {	
-		$license      = trim( get_option(self::$key_option_name));
+		$license_key  = trim( get_option(self::$key_option_name));
 		$status       = get_option(self::$status_option_name);
 		$cache_key    = strtolower(str_replace(' ', '_', self::$plugin));
-		$data         = get_transient($cache_key);
-		$key_old = trim(get_option(self::$key_option_name));
+		$cached_data  = get_transient($cache_key); // returns false if expired
 
-		if ($data && $key_old == $data->key) {
+		if ($cached_data && $license_key == $cached_data->key) {
 			return $status;
 		} 
-		else {
-			// data to send in our API request
-			$api_params = array( 
-				'edd_action'=> 'check_license', 
-				'license' 	=> $license, 
-				'item_name' => urlencode( self::$plugin ), // the name of our product in EDD,
-				'url'       => home_url(),
-				'rand' => uniqid() // cache-busting
-			);
-
-			// Call the custom API.
-			$response = wp_remote_get( add_query_arg( $api_params, self::$store_url ) );
-
-            /*
-            // If the request is blocked (e.g. by firewall rules), then the response is something like 
-            // the following:
-            WP_Error Object
-            (
-                [errors] => Array
-                    (
-                        [http_request_failed] => Array
-                            (
-                                [0] => couldn't connect to host at xyz.com:80
-                            )
-            
-                    )
-            
-                [error_data] => Array
-                    (
-                    )
-            
-            )
-            */			
-            // print '<pre>'; print_r($response); exit;
-            
-			// make sure the response came back okay
-			if (empty($response)) return false;
-			if (is_wp_error($response)) return false;
-			$data = json_decode(wp_remote_retrieve_body($response));
-			$data->key = trim( get_option( self::$key_option_name));
-
-	 		set_transient( $cache_key, $data, 60*60 );
-			return $status;	
+		elseif($response = self::remote_check_license($license_key,'check_license'))
+		{
+			// We append the license key to the response to store it for comparison later
+			$response->key = $license_key;
+	 		set_transient( $cache_key, $response, 60*60*24*self::$license_check_frequency_in_days );
+			$status = $response->license; // *facepalm* -- status (e.g. "valid") is stored in the 'license' key.
+			update_option(self::$status_option_name, $status);
+			return $status;
+		}
+		// Remote request failed!
+		// We punt: assume the license is good and check again tomorrow
+		else
+		{
+			$response = new \stdClass();
+			$response->key = $license_key;
+			set_transient( $cache_key, $response, 60*60*24*1 );
+			return $status;
 		}
 				
+	}
+
+	/**
+	 * Call the remote server to validate the given license key.
+	 * See http://docs.easydigitaldownloads.com/article/384-software-licensing-api
+	 *
+	 * We use simple file_get_contents() because curl is not
+	 * always available and wp_remote_get() was problematic re SSL certificates and CloudFlare. (WTF?)
+	 * Format of 'activate_license' response is like this:
+	 *
+	 * (
+	 * 	[success] => 1
+	 * 	[license_limit] => 0
+	 * 	[site_count] => 1
+	 * 	[activations_left] => unlimited
+	 * 	[license] => valid
+	 * 	[item_name] => PHP Snippets
+	 * 	[expires] => YYYY-MM-DD HH:ii:ss
+	 * 	[payment_id] => xxx
+	 * 	[customer_name] => XXXX YYYY
+	 * 	[customer_email] => xxxx@mail.com
+	 * )
+	 *
+	 * Format of 'check_license' response is like this:
+	 * (
+	 *	[license] => valid
+	 *	[item_name] => PHP Snippets
+	 *	[expires] => 2015-12-09 14:56:54
+	 *	[payment_id] => xxx
+	 *	[customer_name] => XXXX YYYY
+	 *	[customer_email] => xxxx@mail.com
+	 * )
+	 *
+	 * @param string $license_key
+	 * @param string $action activate_license | check_license
+	 *
+*@return mixed
+	 */
+	public static function remote_check_license($license_key, $action='check_license')
+	{
+		$api_params = array(
+			'edd_action'=> $action,
+			'license' 	=> $license_key,
+			'item_name' => urlencode( self::$plugin ), // the unique name of our product in EDD,
+			'url'       => home_url(),
+			'rand' => uniqid() // cache-busting
+		);
+
+		$endpoint = add_query_arg( $api_params, self::$store_url );
+
+		$response = @file_get_contents($endpoint);
+
+		if ($response == false)
+		{
+			error_log('['.self::$plugin.'] There was a problem accessing the remote server: '.self::$store_url);
+			return false;
+		}
+
+		$response = json_decode($response); // Decode as Object
+		if (!is_object($response))
+		{
+			error_log('['.self::$plugin.'] The response from the remote server was not JSON: '.self::$store_url);
+			return false;
+		}
+		// print 'Response: <pre>'; print_r($response); exit;
+
+		return $response;
 	}
 
 }

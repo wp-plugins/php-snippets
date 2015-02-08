@@ -3,7 +3,7 @@ Contributors: fireproofsocks
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WPR4A9JT355BE
 Tags: php, exec, snippet, code
 Requires at least: 3.0
-Tested up to: 4.0.1
+Tested up to: 4.1.0
 Stable tag: 1.0
 
 Provides an interface for developers to easily add PHP code to posts and widgets via selectable shortcodes.
@@ -31,6 +31,17 @@ You can install this plugin in the standard way from the WordPress plugin admin 
 1. Get a License Key from http://craftsmancoding.com/products/downloads/php-snippets/ (enter your name and email to complete checkout)
 1. Enter the License Key in your PHP Settings page ( /wp-admin/options-general.php?page=php-snippets )
 1. Define one or more Snippet directories where you will save your custom PHP Snippets, e.g. [+ABSPATH+]/snippets/
+
+== Create PHP Snippets ==
+
+A PHP snippet is any bit of code that you wish to reuse via shortcode.  Create a file in one of the directories you defined as a Snippet directory.  *DO NOT* create Snippets inside the `wp-content/plugins/php-snippets/` directory!
+
+In order to be picked up on the radar, your file must use one of the extensions you defined (e.g. `.snippet.php`) and you should include a comment block with a "Description" and a "Shortcode" attribute, e.g.
+
+    /*
+    Description: Generates a link to a post or page based on its ID.
+    Shortcode: [link id=123]Click here[/link]
+    */
 
 == Usage ==
 
@@ -104,6 +115,13 @@ Check to make sure the bug is actually in the plugin and not in one of your Snip
 
 == Changelog ==
 
+= 1.1 =
+
+Includes handy features:
+
+* Ability to show/hide the TinyMCE button
+* "PHP Snippets" button now visible in plain-text view
+
 = 1.0 =
 
 * PHP 5.3.0 is now required.
@@ -130,6 +148,10 @@ Worked out some bugs, cleaned this thing up for the prom.
 
 
 == Upgrade Notice ==
+
+= 1.1 =
+
+All users should update to this version: it has several new features and improved license checking.
 
 = 1.0 =
 
