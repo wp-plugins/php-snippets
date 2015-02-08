@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: php, exec, snippet, code
 Requires at least: 3.0
 Tested up to: 4.1.0
-Stable tag: 1.1
+Stable tag: 1.1.1
 
 Provides an interface for developers to easily add PHP code to posts and widgets via selectable shortcodes.
 
