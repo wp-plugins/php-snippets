@@ -9,7 +9,7 @@ if (!current_user_can('edit_posts')) die('You do not have permission to do that.
 // Template variables
 $data = array();
 $data['pagetitle'] = __('Directory List', 'php_snippets');
-
+$data['content'] = '';
 $parent_dir = isset($_POST['parent_dir']) ? $_POST['parent_dir'] : substr(get_home_path(), 0, -1);;
 $dirs = PhpSnippets\Base::list_dirs($parent_dir);
 
